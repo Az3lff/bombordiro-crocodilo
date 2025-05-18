@@ -15,20 +15,65 @@ const BlocklyComponent = () => {
     initCustomBlocks();
   }, []);
 
-  const toolbox = {
+  // const toolbox = {
+  //   kind: "categoryToolbox",
+  //   contents: [
+  //     {
+  //       kind: "category",
+  //       name: "Логика",
+  //       colour: "#5C81A6",
+  //       contents: [
+  //         { kind: "block", type: "controls_if" },
+  //         { kind: "block", type: "logic_compare" },
+  //         { kind: "block", type: "timer" },
+  //         { kind: "block", type: "wall_detect" },
+  //         { kind: "block", type: "line_detect" },
+  //         { kind: "block", type: "math_number" }
+  //       ],
+  //     },
+  //     {
+  //       kind: "category",
+  //       name: "Циклы",
+  //       colour: "#5CA65C",
+  //       contents: [
+  //         { kind: "block", type: "controls_whileUntil" },
+  //       ]
+  //     },
+  //     {
+  //       kind: "category",
+  //       name: "Действия",
+  //       colour: "#5CA65C",
+  //       contents: [
+  //         { kind: "block", type: "move" },
+  //         { kind: "block", type: "capture" }
+  //       ],
+  //     },
+  //   ],
+  // };
+
+  // Базовый toolbox (всегда доступен)
+  const baseToolbox = {
     kind: "categoryToolbox",
     contents: [
+      {
+        kind: "category",
+        name: "Базовые действия",
+        colour: "#77a877",
+        contents: [
+          { kind: "block", type: "move_forward" }, // Убрать 1 условие
+          { kind: "block", type: "stop_moving" },
+          { kind: "block", type: "turn_right" }, // Сделать по градусам
+          { kind: "block", type: "turn_left" }, // Сделать по градусам
+        ],
+      },
       {
         kind: "category",
         name: "Логика",
         colour: "#5C81A6",
         contents: [
           { kind: "block", type: "controls_if" },
-          { kind: "block", type: "condition_stub_2" },
-          { kind: "block", type: "condition_stub" },
-          { kind: "block", type: "condition_stub_3" },
           { kind: "block", type: "logic_compare" },
-          { kind: "block", type: "math_number" }
+          { kind: "block", type: "math_number" },
         ],
       },
       {
@@ -37,15 +82,33 @@ const BlocklyComponent = () => {
         colour: "#5CA65C",
         contents: [
           { kind: "block", type: "controls_whileUntil" },
-        ]
+        ],
+      },
+    ],
+  };
+
+// Продвинутый toolbox для 3-х колесного робота
+  const toolbox = {
+    kind: "categoryToolbox",
+    contents: [
+      ...baseToolbox.contents, // включаем базовые
+      {
+        kind: "category",
+        name: "Датчики",
+        colour: "#95325a",
+        contents: [
+          { kind: "block", type: "timer" },
+          { kind: "block", type: "wall_detect" },
+          { kind: "block", type: "line_detect" },
+        ],
       },
       {
         kind: "category",
         name: "Действия",
-        colour: "#5CA65C",
+        colour: "#077e07",
         contents: [
           { kind: "block", type: "move" },
-          { kind: "block", type: "capture" }
+          { kind: "block", type: "capture" },
         ],
       },
     ],

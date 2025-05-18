@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 export default function Maze() {
-  const { scene } = useGLTF("/models/sapce_maze.glb");
+  const { scene } = useGLTF("/models/map.glb");
 
   console.log(scene)
 
@@ -20,7 +20,7 @@ export default function Maze() {
       <RigidBody type="fixed" colliders="trimesh">
         <primitive
           object={scene}
-          position={[2.5, -2.2, -1]}
+          position={[0, 0, 0]}
           scale={[3, 3, 3]}
           receiveShadow
         />
