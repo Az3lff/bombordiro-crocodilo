@@ -3,6 +3,7 @@ import BlocklyEditor from "./Features/Block-navigation";
 import Scene from "./Features/Scene";
 
 function App() {
+  //piska
   return (
     <div style={{ display: "grid", gridTemplateColumns: "auto auto" }}>
       <BlocklyComponent />
