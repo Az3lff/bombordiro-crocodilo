@@ -73,7 +73,7 @@ const BlocklyComponent = () => {
         contents: [
           { kind: "block", type: "controls_if" },
           { kind: "block", type: "logic_compare" },
-          { kind: "block", type: "math_number" },
+          //{ kind: "block", type: "math_number" },
         ],
       },
       {

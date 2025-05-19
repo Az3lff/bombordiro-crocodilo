@@ -50,7 +50,7 @@ export const initCustomBlocks = () => {
 
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
-      this.setColour(65);
+      this.setColour("#077e07");
       this.setTooltip("Движение");
     }
   };
@@ -71,36 +71,36 @@ export const initCustomBlocks = () => {
 
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
-      this.setColour(65);
-      this.setTooltip("Движение вперед, пока условие выполняется");
+      this.setColour("#077e07");
+      this.setTooltip("Захват объекта интереса");
     }
   };
 
   // Поворот направо
   Blockly.Blocks["turn_right"] = {
     init: function () {
-      // Добавляем текстовое поле
-      this.appendDummyInput().appendField("Повернуть направо");
+      this.appendDummyInput().appendField("Поворот направо. На")
+          .appendField(new Blockly.FieldNumber(90), "ANGLE")
+          .appendField("°");
 
-      // Настраиваем соединения
-      this.setPreviousStatement(true, null); // Вход сверху (любой тип)
-      this.setNextStatement(true, null); // Выход снизу (любой тип)
-      this.setColour(65); // Синий цвет
-      this.setTooltip("Просто текстовый блок с соединениями");
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour("#77a877");
+      this.setTooltip("Поворот направо");
     },
   };
 
   // Поворот налево
   Blockly.Blocks["turn_left"] = {
     init: function () {
-      // Добавляем текстовое поле
-      this.appendDummyInput().appendField("Повернуть налево");
+      this.appendDummyInput().appendField("Поворот налево. На")
+          .appendField(new Blockly.FieldNumber(90), "ANGLE")
+          .appendField("°");
 
-      // Настраиваем соединения
-      this.setPreviousStatement(true, null); // Вход сверху (любой тип)
-      this.setNextStatement(true, null); // Выход снизу (любой тип)
-      this.setColour(65); // Синий цвет
-      this.setTooltip("Просто текстовый блок с соединениями");
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour("#77a877");
+      this.setTooltip("Поворот налево");
     },
   };
 
@@ -114,7 +114,7 @@ export const initCustomBlocks = () => {
 
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
-      this.setColour(65);
+      this.setColour("#77a877");
       this.setTooltip("Движение вперед, пока условие выполняется");
     }
   };
@@ -126,8 +126,8 @@ export const initCustomBlocks = () => {
       // Настраиваем соединения
       this.setPreviousStatement(true, null); // Вход сверху (любой тип)
       this.setNextStatement(true, null); // Выход снизу (любой тип)
-      this.setColour(65); // Синий цвет
-      this.setTooltip("Просто текстовый блок с соединениями");
+      this.setColour("#77a877");
+      this.setTooltip("Остановка движения");
     },
   };
 
@@ -147,8 +147,8 @@ export const initCustomBlocks = () => {
 
       // Настраиваем как булево выражение (для условий)
       this.setOutput(true, 'Boolean');
-      this.setColour(210); // Оранжевый цвет как у условий
-      this.setTooltip('Заглушка для условий');
+      this.setColour("#95325a");
+      this.setTooltip('Стены');
     }
   };
 
@@ -180,8 +180,8 @@ export const initCustomBlocks = () => {
           .appendField(new Blockly.FieldNumber(1), 'DISTANCE');
 
       this.setOutput(true, 'Boolean');
-      this.setColour(210);
-      this.setTooltip('Условие на наличие стены и расстояние до неё');
+      this.setColour("#95325a");
+      this.setTooltip('Условие на обнаружение стены и расстояние до неё');
     }
   };
 
@@ -198,8 +198,8 @@ export const initCustomBlocks = () => {
           ]), 'LINE')
 
       this.setOutput(true, 'Boolean');
-      this.setColour(210);
-      this.setTooltip('Условие');
+      this.setColour("#95325a");
+      this.setTooltip('Условие на обнаружение линии');
     }
   };
 
@@ -221,8 +221,8 @@ export const initCustomBlocks = () => {
           .appendField("мс");
 
       this.setOutput(true, 'Boolean');
-      this.setColour(210);
-      this.setTooltip('Условие');
+      this.setColour("#95325a");
+      this.setTooltip('Условие на проверку таймера');
     }
   };
 
