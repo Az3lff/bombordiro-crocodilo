@@ -281,7 +281,7 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
     <>
       <RigidBody
         ref={playerRef}
-        position={[3.8, 1.2, -1]}
+        position={[10.5, 0.2, 1.1]}
         colliders="cuboid"
         restitution={0.1}
         friction={0.8}
