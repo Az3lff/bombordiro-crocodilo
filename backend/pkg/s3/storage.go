@@ -10,10 +10,10 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go/aws"
 )
 
 const (
@@ -25,32 +25,38 @@ type Client struct {
 	cfg Config
 }
 
-func New(
-	cfg Config,
-) (client *Client, err error) {
-	credsProvider := credentials.NewStaticCredentialsProvider(
-		cfg.Key,
-		cfg.Secret,
-		"",
-	)
+func New(cfg Config) (*Client, error) {
+	creds := credentials.NewStaticCredentialsProvider(cfg.Key, cfg.Secret, "")
 
-	clientCinfig, err := config.LoadDefaultConfig(
+	// Кастомный V2-резолвер под Object Storage
+	ycResolver := aws.EndpointResolverWithOptionsFunc(
+		func(service, region string, _ ...interface{}) (aws.Endpoint, error) {
+			if service == s3.ServiceID {
+				return aws.Endpoint{
+					PartitionID:       "yc",
+					URL:               "https://storage.yandexcloud.net",
+					SigningRegion:     cfg.Region, // "ru-central1"
+					HostnameImmutable: true,
+				}, nil
+			}
+			return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+		})
+
+	base, err := config.LoadDefaultConfig(
 		context.Background(),
 		config.WithRegion(cfg.Region),
-		config.WithCredentialsProvider(credsProvider),
+		config.WithCredentialsProvider(creds),
+		config.WithEndpointResolverWithOptions(ycResolver), // ← главное отличие
 	)
 	if err != nil {
-		return client, err
+		return nil, err
 	}
 
-	sdkClient := s3.NewFromConfig(clientCinfig, func(o *s3.Options) {
-		o.EndpointResolver = s3.EndpointResolverFromURL("https://storage.yandexcloud.net")
+	s3cli := s3.NewFromConfig(base, func(o *s3.Options) {
+		o.UsePathStyle = true // привычный формат storage.yandexcloud.net/bucket/object
 	})
 
-	return &Client{
-		cfg: cfg,
-		s3:  sdkClient,
-	}, nil
+	return &Client{s3: s3cli, cfg: cfg}, nil
 }
 
 func (c *Client) UploadFile(ctx context.Context, key *string, reader io.Reader) error {
@@ -125,7 +131,7 @@ func (c *Client) UploadChunk(
 		Bucket:     aws.String(c.cfg.Bucket),
 		Key:        aws.String(fileID),
 		UploadId:   aws.String(uploadIDResponse),
-		PartNumber: chunkID,
+		PartNumber: aws.Int32(chunkID),
 		Body:       bytes.NewReader(body),
 	})
 	if err != nil {
@@ -164,8 +170,9 @@ func (c *Client) finishUpload(
 			PartNumber: part.PartNumber,
 			ETag:       part.ETag,
 		})
-
-		fileSize += part.Size
+		if part.Size != nil {
+			fileSize += *part.Size
+		}
 	}
 
 	_, err = c.s3.CompleteMultipartUpload(context.Background(), &s3.CompleteMultipartUploadInput{
@@ -192,7 +199,7 @@ func (c *Client) DownloadChunk(
 	out, err := c.s3.GetObject(ctx, &s3.GetObjectInput{
 		Bucket:     aws.String(c.cfg.Bucket),
 		Key:        aws.String(fileID),
-		PartNumber: chunkID,
+		PartNumber: aws.Int32(chunkID),
 	})
 	if err != nil {
 		return nil, err

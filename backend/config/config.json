@@ -67,7 +67,7 @@
       "Bucket": "profkom-dev",
       "Key": "YCAJEjh8P8ttT2kFrqyQS6mnM",
       "Secret": "YCPMI9dmM3B7s4tPgHRziMP1gZTwc-brjhbAsCSC",
-      "Region": "ru"
+      "Region": "ru-central1"
   },
   "Service": {
     "Auth": {

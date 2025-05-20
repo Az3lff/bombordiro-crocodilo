@@ -55,3 +55,13 @@ create table if not exists student.student
     second_name text not null,
     image_url text default null
 );
+
+create schema if not exists content;
+
+create table if not exists content.map
+(
+    id uuid primary key,
+    title text not null,
+    description text not null,
+    file_url text not null
+);
