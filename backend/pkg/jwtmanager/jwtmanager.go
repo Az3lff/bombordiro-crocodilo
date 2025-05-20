@@ -25,6 +25,7 @@ package jwtmanager
 
 import (
 	"errors"
+	"golang.org/x/crypto/bcrypt"
 	"sync"
 	"time"
 
@@ -39,6 +40,8 @@ var (
 	ErrExpiredToken = errors.New("token is expired")
 	// ErrTokenNotFound is returned when token isn't present in storage (revoked or never existed).
 	ErrTokenNotFound = errors.New("token not found")
+	ErrPasswordHash  = errors.New("password hashing failed")
+	ErrPasswordMatch = errors.New("passwords do not match")
 )
 
 // Manager handles JWT generation & verification and refresh‑token rotation.
@@ -262,4 +265,23 @@ func (s *memoryStorage) TokenExists(userID, tokenID string) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+func (m *Manager) HashPassword(password string) (string, error) {
+	// Хэшируем пароль с дефолтной стоимостью
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", ErrPasswordHash
+	}
+	return string(hashedPassword), nil
+}
+
+// Сравнение пароля с хэшированным
+func (m *Manager) ComparePassword(hashedPassword, password string) error {
+	// Проверяем, совпадает ли введённый пароль с хэшированным
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
+		return ErrPasswordMatch
+	}
+	return nil
 }

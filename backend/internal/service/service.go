@@ -14,6 +14,6 @@ type Service struct {
 
 func New(cfg Config, repository *pg.Repository, cache *redis.Repository, txmanager *txmanager.Manager, jwtmanager *jwtmanager.Manager) *Service {
 	return &Service{
-		Auth: auth.New(cfg.Auth, repository.Auth, cache.Auth, jwtmanager),
+		Auth: auth.New(cfg.Auth, repository.Auth, cache.Auth, jwtmanager, txmanager),
 	}
 }

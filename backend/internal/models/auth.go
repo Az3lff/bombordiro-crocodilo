@@ -1,23 +1,44 @@
 package models
 
 type (
-	// sign in
-	TeacherSignInRequest struct {
+	// admin sign in
+	AdminSignInRequest struct {
 		Login    string `json:"login"`
 		Password string `json:"password"`
 	}
-	TeacherSignInResponse struct {
+	AdminSignInResponse struct {
 		AuthToken string `json:"auth_token"`
 	}
-	// sign up
-	TeacherSignUpRequest struct {
+	// admin sign up
+	AdminSignUpRequest struct {
 		Login       string `json:"login"`
 		Password    string `json:"password"`
 		FirstName   string `json:"first_name"`
 		SecondName  string `json:"second_name"`
 		InviteToken string `json:"invite_token"`
 	}
-	TeacherSignUpResponse struct {
+	AdminSignUpResponse struct {
 		AuthToken string `json:"auth_token"`
+	}
+	// client sign in
+	ClientSignInRequest struct {
+		Login    string `json:"login"`
+		Password string `json:"password"`
+	}
+	ClientSignInResponse struct {
+		AuthToken string `json:"auth_token"`
+	}
+	// client sign up
+	ClientSignUpRequest struct {
+		Login      string `json:"login"`
+		Password   string `json:"password"`
+		FirstName  string `json:"first_name"`
+		SecondName string `json:"second_name"`
+	}
+	ClientSignUpResponse struct {
+		AuthToken string `json:"auth_token"`
+	}
+	// utils
+	PostInviteTokenRequest struct {
 	}
 )
