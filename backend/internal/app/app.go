@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"github.com/Az3lff/bombordiro-crocodilo/internal/transport/http/maps"
+	"github.com/Az3lff/bombordiro-crocodilo/pkg/s3"
 	"time"
 
 	"github.com/Az3lff/bombordiro-crocodilo/internal/service"
@@ -39,6 +41,11 @@ func Run(ctx context.Context, cfg *config.Config) (err error) {
 	rd := rediscomponent.New(cfg.Redis)
 	redis := redis.New(rd.Client)
 
+	s3, err := s3.New(cfg.S3)
+	if err != nil {
+		return err
+	}
+
 	storage := jwtmanager.NewMemoryStorage()
 	jwtManager := jwtmanager.New(
 		cfg.JwtSecrets.AuthSecretKey,
@@ -54,14 +61,17 @@ func Run(ctx context.Context, cfg *config.Config) (err error) {
 		redis,
 		txManager,
 		jwtManager,
+		s3,
 	)
 
 	server := http.New(cfg.HTTP.Serve)
 
 	authHandler := auth.NewHandler(services.Auth)
+	mapsHandler := maps.NewHandler(services.Maps)
 
 	binder := transport.NewBinder([]http.Binder{
 		auth.NewBinder(server, authHandler),
+		maps.NewBinder(server, mapsHandler),
 	}...)
 
 	httpServer := http.NewWithBinder(

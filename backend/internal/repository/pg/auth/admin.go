@@ -3,8 +3,9 @@ package auth
 import (
 	"context"
 	"fmt"
-	"github.com/Az3lff/bombordiro-crocodilo/internal/entities"
 	"time"
+
+	"github.com/Az3lff/bombordiro-crocodilo/internal/entities"
 )
 
 func (r *Repository) SelectAdminExists(ctx context.Context, login string) (exists bool, err error) {
