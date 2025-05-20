@@ -1,58 +1,39 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useStore } from "@react-three/fiber";
 import { OrbitControls, KeyboardControls } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { useCallback, useEffect, useRef } from "react";
 import Maze from "../Maze";
 import { Player } from "../Player";
 import CameraControls from "../Camera-controls";
-import { $playerRef, startMoving, setPlayerRef, stopMoving, turnLeft } from "../../Entities/block/player/store/store";
+import { setPlayerRef, } from "../../Entities/block/player/store/store";
+import { $sensorVisible, setIsSensorVisible } from "../../Entities/sensor-control/store";
+import { useUnit } from "effector-react";
 
 declare global {
   interface Window {
-    player: any; // или укажи более точный тип, если хочешь: PlayerRef
+    player: any;
     movePlayerForward: any;
     stopMoving: any
     turns: any
     turnRight: any
     turnLeft: any
+    setMotorSpeed: any
+    setBothMotorSpeed: any
   }
 }
 
 export default function Scene() {
   const controlsRef = useRef<any>(null);
-  const playerRef = useRef<PlayerRef | null>(null); // ⬅️ создаём ref
+  const playerRef = useRef<any>(null);
+
+  const sensorVisibility = useUnit($sensorVisible);
 
   const handlePlayerRef = useCallback((refInstance: any) => {
-      if (refInstance) {
-          playerRef.current = refInstance;
-          setPlayerRef(refInstance);
-
-          let leftMotorSpeed = 0;
-          let rightMotorSpeed = 0;
-
-          window.setMotor = async (side: "LEFT" | "RIGHT", speed: number) => {
-              if (side === "LEFT") {
-                  leftMotorSpeed = speed;
-              } else {
-                  rightMotorSpeed = speed;
-              }
-
-              if (playerRef.current) {
-                  playerRef.current.drive(leftMotorSpeed, rightMotorSpeed);
-              }
-          };
-      }
+    if (refInstance) {
+      playerRef.current = refInstance;
+      setPlayerRef(refInstance);
+    }
   }, []);
-
-  const click = () => {
-    console.log("click, playerRef in store", $playerRef.getState());
-    turnLeft()
-  }
-
-  const secondClick = () => {
-    console.log("click, playerRef in store", $playerRef.getState());
-    stopMoving()
-  }
 
   return (
     <KeyboardControls
@@ -67,8 +48,17 @@ export default function Scene() {
         { name: "cameraRight", keys: ["ArrowRight"] },
       ]}
     >
-      {/* <button style={{position: 'absolute', left: 450}} onClick={click}>кнопка</button>
-      <button style={{position: 'absolute', left: 510}} onClick={secondClick}>кнопка 2</button> */}
+      <button style={{
+        position: 'absolute',
+        right: 20, // Уменьшил отступ для мобильности
+        top: 20,   // Добавил отступ сверху
+        zIndex: 10, // Увеличил z-index
+        padding: '8px 16px',
+        background: '#ffffff',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        cursor: 'pointer'
+      }} onClick={() => setIsSensorVisible(!sensorVisibility)}>{sensorVisibility ? 'Скрыть сенсоры' : 'Отобразить сенсоры'}</button>
       <Canvas
         shadows
         camera={{
@@ -95,7 +85,6 @@ export default function Scene() {
           shadow-camera-top={30}
           shadow-camera-bottom={-30}
         />
-
         <Physics>
           <Maze />
           <Player ref={handlePlayerRef} />

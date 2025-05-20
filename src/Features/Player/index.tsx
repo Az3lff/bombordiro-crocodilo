@@ -1,70 +1,43 @@
-import {useGLTF, useKeyboardControls} from "@react-three/drei";
-import {useFrame, useThree} from "@react-three/fiber";
-import {forwardRef, JSX, useEffect, useImperativeHandle, useRef, useState} from "react";
-import {RigidBody} from "@react-three/rapier";
+import { useGLTF, useKeyboardControls } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
+import { forwardRef, JSX, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { RigidBody } from "@react-three/rapier";
 import * as THREE from "three";
-import {$speed} from "../../Entities/block/speed/store";
+import { motorsStore } from "../../Entities/block/speed/store";
+import { DebugRay } from "../Debug";
+import { useUnit } from "effector-react";
+import { $sensorVisible } from "../../Entities/sensor-control/store";
 
 interface PlayerRef {
   moveForward: () => Promise<boolean>;
   turn: (direction: 'LEFT' | 'RIGHT') => Promise<void>;
-  checkPath: (side: 'right') => boolean;
-  startMoving: () => void;
-  stopMoving: () => void;
-  drive: (leftSpeed: number, rightSpeed: number) => void;
-}
-
-function DebugRay({
-  origin,
-  direction,
-  length = 2,
-  color = "red",
-}: {
-  origin: THREE.Vector3;
-  direction: THREE.Vector3;
-  length?: number;
-  color?: string;
-}) {
-  const { scene } = useThree();
-
-  useEffect(() => {
-    const points = [
-      origin.clone(),
-      origin.clone().add(direction.clone().normalize().multiplyScalar(length)),
-    ];
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color });
-    const line = new THREE.Line(geometry, material);
-    scene.add(line);
-
-    return () => {
-      scene.remove(line);
-      geometry.dispose();
-      material.dispose();
-    };
-  }, [origin, direction, length, color, scene]);
-
-  return null;
 }
 
 export const Player = forwardRef<PlayerRef>((props, ref) => {
   const { scene } = useGLTF("/models/bobot.glb");
-  const playerRef = useRef<PlayerRef>(null);
+  const playerRef = useRef<any>(null);
   const modelRef = useRef<THREE.Group>(null);
   const [, getKeys] = useKeyboardControls();
   const { scene: threeScene } = useThree();
-
+  const speed = 5;
   const targetVelocity = useRef(new THREE.Vector3());
   const currentVelocity = useRef(new THREE.Vector3());
   const raycaster = useRef(new THREE.Raycaster());
   const mazeWalls = useRef<THREE.Object3D[]>([]);
   const prevTurns = useRef({ right: false, left: false, forward: false });
-  const isMoving = useRef(false);
 
   const [debugRay, setDebugRay] = useState<JSX.Element | null>(null);
 
-  const leftMotorSpeedRef = useRef(0);
-  const rightMotorSpeedRef = useRef(0);
+  const leftMotorSpeed = motorsStore.getLeftSpeed();
+  const rightMotorSpeed = motorsStore.getRightSpeed();
+
+  const sensorVisibility = useUnit($sensorVisible);
+
+  useEffect(() => {
+    if (!sensorVisibility) {
+      setDebugRay(null)
+    }
+  }, [sensorVisibility])
 
   useEffect(() => {
     const walls: THREE.Mesh[] = [];
@@ -78,20 +51,6 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
     console.log("Найдено мешей стен:", walls.length);
   }, [threeScene]);
 
-  const checkDirection = (direction: THREE.Vector3, distance = 2.0): boolean => {
-    if (!playerRef.current || !modelRef.current) return true;
-
-    const position = playerRef.current.translation();
-    const origin = new THREE.Vector3(position.x, position.y + 0.5, position.z);
-    const rayDirection = direction.clone().applyEuler(modelRef.current.rotation).normalize();
-
-    raycaster.current.far = distance;
-    raycaster.current.set(origin, rayDirection);
-    const intersects = raycaster.current.intersectObjects(mazeWalls.current, true);
-
-    return intersects.length === 0;
-  };
-
   const checkTurns = () => {
     if (!playerRef.current || !modelRef.current) return;
 
@@ -100,9 +59,9 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
     const rotation = modelRef.current.rotation;
 
     const forward = new THREE.Vector3(1, 0, 0).applyEuler(rotation).normalize();
+    const backside = new THREE.Vector3(-1, 0, 0).applyEuler(rotation).normalize();
     const right = new THREE.Vector3(0, 0, 1).applyEuler(rotation).normalize();
     const left = new THREE.Vector3(0, 0, -1).applyEuler(rotation).normalize();
-
     // Инициализация глобального объекта, если его нет
     if (!window.turns) {
       window.turns = {
@@ -142,6 +101,7 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
 
     // === Вперёд ===
     const offsetForward = base.clone().add(forward.clone().multiplyScalar(0.5));
+    const offsetBackside = base.clone().add(backside.clone().multiplyScalar(0.5));
     raycaster.current.set(offsetForward, forward);
     const forwardClear = raycaster.current.intersectObjects(mazeWalls.current, true).length === 0;
     if (!forwardClear && prevTurns.current.forward !== false) {
@@ -152,11 +112,12 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
     window.turns.forward = forwardClear;
 
     // Отладочные лучи
-    setDebugRay(
+    sensorVisibility && setDebugRay(
       <>
         <DebugRay origin={offsetRight} direction={right} length={1} color="orange" />
         <DebugRay origin={offsetLeft} direction={left} length={1} color="orange" />
         <DebugRay origin={offsetForward} direction={forward} length={1} color={forwardClear ? "cyan" : "red"} />
+        <DebugRay origin={offsetBackside} direction={backside} length={1} color={'orange'} />
       </>
     );
   };
@@ -165,15 +126,14 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
 
   useFrame(() => {
     const { moveForward, moveBackward, moveLeft, moveRight } = getKeys();
-    const speed = $speed.getState();
     const rotationSpeed = 3;
     const acceleration = 10;
 
     checkTurns(); // Проверка поворота на каждом кадре
 
     if (playerRef.current && modelRef.current) {
-      const left = leftMotorSpeedRef.current;
-      const right = rightMotorSpeedRef.current;
+      const left = leftMotorSpeed;
+      const right = rightMotorSpeed;
 
       const direction = new THREE.Vector3(1, 0, 0).applyEuler(modelRef.current.rotation);
 
@@ -207,13 +167,6 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
       targetVelocity.current.copy(direction).multiplyScalar(speed);
     }
 
-    if (isMoving.current && playerRef.current && modelRef.current) {
-      console.log('Двигаемся')
-      const direction = new THREE.Vector3(1, 0, 0);
-      direction.applyEuler(modelRef.current.rotation);
-      targetVelocity.current.copy(direction).multiplyScalar(speed);
-    }
-
     currentVelocity.current.lerp(targetVelocity.current, acceleration * 0.01);
 
     if (playerRef.current) {
@@ -228,12 +181,6 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
   });
 
   useImperativeHandle(ref, () => ({
-    startMoving() {
-      isMoving.current = true;
-    },
-    stopMoving() {
-      isMoving.current = false;
-    },
     async moveForward() {
       if (!modelRef.current) return false;
 
@@ -263,24 +210,24 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
       }
     },
 
-    drive(leftSpeed: number, rightSpeed: number) {
-      leftMotorSpeedRef.current = leftSpeed;
-      rightMotorSpeedRef.current = rightSpeed;
-    },
+    // drive(leftSpeed: number, rightSpeed: number) {
+    //   leftMotorSpeedRef.current = leftSpeed;
+    //   rightMotorSpeedRef.current = rightSpeed;
+    // },
 
 
-    checkPath(side: 'right') {
-      switch (side) {
-        case 'right': return checkDirection(new THREE.Vector3(1, 0, 0), 1.5);
-        default: return false;
-      }
-    }
+    // checkPath(side: 'right') {
+    //   switch (side) {
+    //     case 'right': return checkDirection(new THREE.Vector3(1, 0, 0), 1.5);
+    //     default: return false;
+    //   }
+    // }
   }));
 
   return (
     <>
       <RigidBody
-        ref={playerRef}
+        ref={playerRef as any}
         position={[10.5, 0.2, 1.1]}
         colliders="cuboid"
         restitution={0.1}

@@ -1,6 +1,6 @@
-import * as THREE from "three";
-import { useEffect, useRef } from "react";
 import { useThree } from "@react-three/fiber";
+import { useEffect } from "react";
+import * as THREE from "three";
 
 export function DebugRay({
   origin,
@@ -13,7 +13,6 @@ export function DebugRay({
   length?: number;
   color?: string;
 }) {
-  const lineRef = useRef<THREE.Line>(null);
   const { scene } = useThree();
 
   useEffect(() => {
@@ -24,7 +23,6 @@ export function DebugRay({
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({ color });
     const line = new THREE.Line(geometry, material);
-    lineRef.current = line;
     scene.add(line);
 
     return () => {
