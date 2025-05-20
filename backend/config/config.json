@@ -1,0 +1,80 @@
+{
+  "Defaults": {
+    "HealthCheck": {
+      "Address": "0.0.0.0:8000"
+    },
+    "Logger": {
+      "Level": "debug",
+      "SecureReqJsonPaths": [],
+      "SecureResJsonPaths": [],
+      "MaxHTTPBodySize": 100000
+    },
+    "Prometheus": {
+      "Host": "0.0.0.0:9000"
+    }
+  },
+  "Postgres": {
+    "Host": "localhost",
+    "Port": "5432",
+    "User": "user",
+    "Password": "password",
+    "DBName": "bombodiro-crocodilo",
+    "SSLMode": "disable",
+    "PGDriver": "pgx",
+    "Settings": {
+      "MaxOpenConns": 10,
+      "ConnMaxLifetime": 250,
+      "MaxIdleConns": 30,
+      "ConnMaxIdleTime": 20
+    }
+  },
+  "Redis": {
+    "Host": "localhost",
+    "Port": "6379",
+    "MinIdleConns": 10,
+    "PoolSize": 10,
+    "PoolTimeout": 10,
+    "UseCertificates": false,
+    "InsecureSkipVerify": false,
+    "DB": 0
+  },
+  "HTTP": {
+    "Cors": {
+      "AllowOrigins": "*",
+      "AllowHeaders": "app-version,content-type,ref-cache,authorization,sg,mt-key,refresh,access,shouldRetry,Access-Control-Allow-Origin,x-requested-with,locale,captchawidth,captchaheight,X-MobileAccess-Token",
+      "AllowMethods": "GET,POST,HEAD,PUT,DELETE,CONNECT,OPTIONS,TRACE,PATCH",
+      "ExposeHeaders": "X-Trace-Id",
+      "AllowCredentials": false
+    },
+    "Serve": {
+      "Host": "0.0.0.0:8000",
+      "IpHeader": "CF-Connecting-IP",
+      "BodyLimit": 10485760,
+      "StopTimeout": 10,
+      "DisableStartupMessage": true
+    },
+    "Logging": {
+      "SecureReqJsonPaths": [
+        "password"
+      ],
+      "SecureResJsonPaths": [
+        "test"
+      ],
+      "ShowUnknownErrorsInResponse": true
+    }
+  },
+  "S3": {
+      "Bucket": "profkom-dev",
+      "Key": "YCAJEjh8P8ttT2kFrqyQS6mnM",
+      "Secret": "YCPMI9dmM3B7s4tPgHRziMP1gZTwc-brjhbAsCSC",
+      "Region": "ru"
+  },
+  "Service": {
+    "Auth": {
+    }
+  },
+  "JwtSecrets": {
+    "AuthSecretKey": "authSecretKey",
+    "RefreshSecretKey": "refreshSecretKey"
+  }
+}
