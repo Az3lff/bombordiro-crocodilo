@@ -8,29 +8,8 @@ export const stopMoving = createEvent();
 export const turnLeft = createEvent();
 export const turnRight = createEvent();
 
-
 $playerRef.on(setPlayerRef, (_, ref) => ref);
 
-// Событие, которое инициирует движение игрока
-
-// Реакция на событие movePlayerForward
-sample({
-  source: $playerRef,
-  clock: startMoving,
-  filter: (ref): ref is { startMoving: () => void } => !!ref && typeof ref.startMoving === "function",
-  fn: (player) => {
-    player.startMoving();
-  },
-});
-
-sample({
-  source: $playerRef,
-  clock: stopMoving,
-  filter: (ref): ref is { stopMoving: () => void } => !!ref && typeof ref.stopMoving === "function",
-  fn: (player) => {
-    player.stopMoving();
-  },
-});
 sample({
   source: $playerRef,
   clock: turnLeft,
