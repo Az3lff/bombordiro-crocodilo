@@ -215,25 +215,72 @@ export const initCustomBlocks = () => {
   };
 
   // TODO: таймер в секундах или миллисекундах
+  // Blockly.Blocks['timer'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField('Значение таймера')
+  //       .appendField(new Blockly.FieldDropdown([
+  //         ['=', '=='],
+  //         ['≠', '!='],
+  //         ['<', '<'],
+  //         ['≤', '<='],
+  //         ['>', '>'],
+  //         ['≥', '>=']
+  //       ]), 'OPERATOR')
+  //       .appendField(new Blockly.FieldNumber(0), "TIMER_VALUE")
+  //       .appendField("мс");
+  //
+  //     this.setOutput(true, 'Boolean');
+  //     this.setColour("#95325a");
+  //     this.setTooltip('Условие на проверку таймера');
+  //   }
+  // };
   Blockly.Blocks['timer'] = {
     init: function () {
-      // Добавляем выпадающий список
       this.appendDummyInput()
-        .appendField('Время')
-        .appendField(new Blockly.FieldDropdown([
-          ['=', '=='],
-          ['≠', '!='],
-          ['<', '<'],
-          ['≤', '<='],
-          ['>', '>'],
-          ['≥', '>=']
-        ]), 'OPERATOR')
-        .appendField(new Blockly.FieldNumber(0), "TIMER_VALUE")
-        .appendField("мс");
+        .appendField('Значение таймера в мс')
 
-      this.setOutput(true, 'Boolean');
+      this.setOutput(true, 'Number');
       this.setColour("#95325a");
-      this.setTooltip('Условие на проверку таймера');
+      this.setTooltip('Получение значения таймера');
+    }
+  };
+
+  // TODO: сброс таймера
+  Blockly.Blocks['timer_reset'] = {
+    init: function () {
+      this.appendDummyInput().appendField("Сброс таймера");
+
+      // Настраиваем соединения
+      this.setPreviousStatement(true, null); // Вход сверху (любой тип)
+      this.setNextStatement(true, null); // Выход снизу (любой тип)
+      this.setColour("#95325a");
+      this.setTooltip('Cброс таймера до 0 мс');
+    }
+  };
+
+  // TODO: Энкодер (датчик пройденного пути)
+  Blockly.Blocks['encoder'] = {
+    init: function () {
+      this.appendDummyInput().appendField("Значение энкодера");
+
+      // Настраиваем соединения
+      this.setOutput(true, 'Number');
+      this.setColour("#95325a");
+      this.setTooltip('Получение значения энкодера');
+    }
+  };
+
+  // TODO: сброс энкодера
+  Blockly.Blocks['encoder_reset'] = {
+    init: function () {
+      this.appendDummyInput().appendField("Сброс энкодера");
+
+      // Настраиваем соединения
+      this.setPreviousStatement(true, null); // Вход сверху (любой тип)
+      this.setNextStatement(true, null); // Выход снизу (любой тип)
+      this.setColour("#95325a");
+      this.setTooltip('Cброс энкодера до 0');
     }
   };
 
