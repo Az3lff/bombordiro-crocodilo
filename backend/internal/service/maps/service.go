@@ -32,16 +32,20 @@ func New(repository *maps.Repository, txmanager *txmanager.Manager, s3 *s3.Clien
 }
 
 func (s *Service) CreateMap(ctx context.Context, req models.PostMapRequest) (err error) {
-	url, err := s.uploadFile(ctx, bytes.NewReader(req.File.Bytes), req.File.Filename)
+	mapUrl, err := s.uploadFile(ctx, bytes.NewReader(req.File.Bytes), req.File.Filename)
+	if err != nil {
+		return err
+	}
+	descUrl, err := s.uploadFile(ctx, bytes.NewReader(req.Desc.Bytes), req.Desc.Filename)
 	if err != nil {
 		return err
 	}
 
 	appMap := &entities.Map{
-		ID:      uuid.New(),
-		Title:   req.Title,
-		Desc:    req.Desc,
-		FileUrl: url,
+		ID:       uuid.New(),
+		Title:    req.Title,
+		DescFile: descUrl,
+		MapFile:  mapUrl,
 	}
 
 	err = s.repo.InsertMap(ctx, appMap)
@@ -63,8 +67,8 @@ func (s *Service) GetMaps(ctx context.Context) (resp models.GetMapsResponse, err
 		resp.Maps[i] = models.Map{
 			ID:      m.ID,
 			Title:   m.Title,
-			Desc:    m.Desc,
-			FileUrl: m.FileUrl,
+			DescUrl: m.DescFile,
+			MapUrl:  m.MapFile,
 		}
 	}
 
@@ -80,14 +84,19 @@ func (s *Service) GetMap(ctx context.Context, id uuid.UUID) (resp models.GetMapR
 	resp.Map = models.Map{
 		ID:      appMap.ID,
 		Title:   appMap.Title,
-		Desc:    appMap.Desc,
-		FileUrl: appMap.FileUrl,
+		DescUrl: appMap.DescFile,
+		MapUrl:  appMap.MapFile,
 	}
 
 	return resp, err
 }
 
 func (s *Service) DeleteMap(ctx context.Context, id uuid.UUID) (err error) {
+	err = s.repo.DeleteMap(ctx, id)
+	if err != nil {
+		return err
+	}
+	
 	return err
 }
 

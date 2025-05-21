@@ -27,8 +27,8 @@ func (r *Repository) InsertMap(ctx context.Context, appMap *entities.Map) (err e
 	insert into content.map(
 			id,
 			title,
-			description,
-			file_url
+			description_file,
+			map_file
 	) values (
 	        $1, $2, $3, $4
 	) RETURNING *
@@ -40,8 +40,8 @@ func (r *Repository) InsertMap(ctx context.Context, appMap *entities.Map) (err e
 		query,
 		appMap.ID,
 		appMap.Title,
-		appMap.Desc,
-		appMap.FileUrl,
+		appMap.DescFile,
+		appMap.MapFile,
 	)
 	if err != nil {
 		return err
@@ -82,4 +82,22 @@ func (r *Repository) SelectMap(ctx context.Context, id uuid.UUID) (appMap entiti
 	}
 
 	return appMap, err
+}
+
+func (r *Repository) DeleteMap(ctx context.Context, id uuid.UUID) (err error) {
+	query := `
+		delete from content.map
+		where id = $1
+	`
+
+	_, err = r.db.ExecContext(
+		ctx,
+		query,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	return err
 }

@@ -62,6 +62,6 @@ create table if not exists content.map
 (
     id uuid primary key,
     title text not null,
-    description text not null,
-    file_url text not null
+    description_file text not null,
+    map_file text not null
 );
