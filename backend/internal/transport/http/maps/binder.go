@@ -27,7 +27,7 @@ func (b *Binder) BindRoutes(_ context.Context) {
 		maps := v1.Group("/maps")
 
 		maps.Get("/:id", b.handler.GetMap)
-		maps.Get("", b.handler.GetMaps)
+		maps.Get("/", b.handler.GetMaps)
 		// auth.Post("/sign-in")
 	}
 
@@ -37,7 +37,8 @@ func (b *Binder) BindRoutes(_ context.Context) {
 
 		maps := v1.Group("/maps")
 
-		maps.Post("/upload", b.handler.PostMap)
+		maps.Post("/", b.handler.PostMap)
+		maps.Delete("/:id", b.handler.DeleteMap)
 		//auth.Post("/sign-in")
 	}
 }

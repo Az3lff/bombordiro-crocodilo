@@ -23,27 +23,15 @@ func (h *Handler) PostMap(c *fiber.Ctx) (err error) {
 	var request models.PostMapRequest
 	request.ID = uuid.New()
 	request.Title = c.FormValue("title")
-	request.Desc = c.FormValue("desc")
 
-	file, err := c.FormFile("file")
+	request.Desc, err = h.file(c, "desc")
 	if err != nil {
 		return err
 	}
 
-	f, err := file.Open()
+	request.File, err = h.file(c, "file")
 	if err != nil {
 		return err
-	}
-	defer f.Close()
-
-	fileBytes, err := io.ReadAll(f)
-	if err != nil {
-		return err
-	}
-
-	request.File = models.File{
-		Filename: file.Filename,
-		Bytes:    fileBytes,
 	}
 
 	err = h.service.CreateMap(c.Context(), request)
@@ -55,7 +43,18 @@ func (h *Handler) PostMap(c *fiber.Ctx) (err error) {
 }
 
 func (h *Handler) DeleteMap(c *fiber.Ctx) (err error) {
-	return err
+	id := c.Params("id")
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+
+	err = h.service.DeleteMap(c.Context(), uid)
+	if err != nil {
+		return err
+	}
+
+	return c.SendStatus(200)
 }
 
 func (h *Handler) GetMap(c *fiber.Ctx) (err error) {
@@ -80,4 +79,27 @@ func (h *Handler) GetMaps(c *fiber.Ctx) (err error) {
 	}
 
 	return c.JSON(resp)
+}
+
+func (h *Handler) file(c *fiber.Ctx, key string) (file *models.File, err error) {
+	formFile, err := c.FormFile(key)
+	if err != nil {
+		return file, err
+	}
+
+	f, err := formFile.Open()
+	if err != nil {
+		return file, err
+	}
+	defer f.Close()
+
+	fileBytes, err := io.ReadAll(f)
+	if err != nil {
+		return file, err
+	}
+
+	return &models.File{
+		Filename: formFile.Filename,
+		Bytes:    fileBytes,
+	}, err
 }

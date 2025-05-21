@@ -10,14 +10,14 @@ type (
 	Map struct {
 		ID      uuid.UUID `json:"id"`
 		Title   string    `json:"title"`
-		Desc    string    `json:"desc"`
-		FileUrl string    `json:"file_url"`
+		DescUrl string    `json:"desc_url"`
+		MapUrl  string    `json:"map_url"`
 	}
 	PostMapRequest struct {
 		ID    uuid.UUID
 		Title string
-		Desc  string
-		File  File
+		Desc  *File
+		File  *File
 	}
 
 	GetMapResponse struct {
