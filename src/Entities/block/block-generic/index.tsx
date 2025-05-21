@@ -3,6 +3,8 @@ import { BlocklyWorkspace } from "react-blockly";
 import { initCustomBlocks } from "./blockly-init";
 import { javascriptGenerator } from "blockly/javascript";
 import "./styles.css";
+import * as Blockly from 'blockly/core';
+import * as ru from 'blockly/msg/ru';
 
 import { useUnit } from "effector-react";
 import { setBlocklyCode } from "../store/store";
@@ -12,6 +14,7 @@ const BlocklyComponent = () => {
   const setCode = useUnit(setBlocklyCode);
 
   useEffect(() => {
+    Blockly.setLocale(ru as unknown as { [key: string]: string });
     initCustomBlocks();
   }, []);
 
