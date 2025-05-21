@@ -82,7 +82,15 @@ const BlocklyComponent = () => {
         colour: "#5CA65C",
         contents: [
           { kind: "block", type: "controls_whileUntil" },
+          { kind: "block", type: "controls_for" },
+          { kind: "block", type: "controls_repeat_ext" },
         ],
+      },
+      {
+        kind: "category",
+        name: "Переменные",
+        custom: "VARIABLE",
+        colour: "#A65C81"
       },
     ],
   };
@@ -94,6 +102,16 @@ const BlocklyComponent = () => {
       ...baseToolbox.contents, // включаем базовые
       {
         kind: "category",
+        name: "Действия",
+        colour: "#077e07",
+        contents: [
+          { kind: "block", type: "move" },
+          { kind: "block", type: "write_msg" },
+          { kind: "block", type: "capture" },
+        ],
+      },
+      {
+        kind: "category",
         name: "Датчики",
         colour: "#95325a",
         contents: [
@@ -103,15 +121,6 @@ const BlocklyComponent = () => {
           { kind: "block", type: "encoder_reset" },
           { kind: "block", type: "wall_detect" },
           { kind: "block", type: "line_detect" },
-        ],
-      },
-      {
-        kind: "category",
-        name: "Действия",
-        colour: "#077e07",
-        contents: [
-          { kind: "block", type: "move" },
-          { kind: "block", type: "capture" },
         ],
       },
     ],

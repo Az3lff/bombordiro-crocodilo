@@ -89,6 +89,24 @@ export const initCustomBlocks = () => {
     }
   };
 
+  // TODO: Написать сообщение в отладочное окно
+  Blockly.Blocks["write_msg"] = {
+    init: function () {
+      this.appendDummyInput()
+          .appendField("Написать :")
+          .appendField(new Blockly.FieldTextInput(""), "TEXT_1")
+      this.appendValueInput("NUMBER")
+          .setCheck("Number")
+      this.appendDummyInput()
+          .appendField(new Blockly.FieldTextInput(""), "TEXT_2");
+
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour("#077e07");
+      this.setTooltip("Написать сообщение в отладочное окно");
+    }
+  };
+
   // Поворот направо
   Blockly.Blocks["turn_right"] = {
     init: function () {

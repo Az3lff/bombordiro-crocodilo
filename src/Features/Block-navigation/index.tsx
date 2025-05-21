@@ -25,6 +25,8 @@ const BlocklyEditor = () => {
       const workspace = Blockly.inject(blocklyDiv.current, {
         toolbox: toolbox,
         trashcan: true,
+        //tooltips: true,
+        comments: true,       // (опционально) поддержка комментариев к блокам
       });
 
       // Генерация кода при изменении

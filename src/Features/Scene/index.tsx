@@ -58,7 +58,7 @@ export default function Scene() {
         border: '1px solid #ccc',
         borderRadius: '4px',
         cursor: 'pointer'
-      }} onClick={() => setIsSensorVisible(!sensorVisibility)}>{sensorVisibility ? 'Скрыть сенсоры' : 'Отобразить сенсоры'}</button>
+      }} onClick={() => setIsSensorVisible(!sensorVisibility)}>{sensorVisibility ? 'Скрыть датчик стены' : 'Отобразить датчик стены'}</button>
       <Canvas
         shadows
         camera={{
