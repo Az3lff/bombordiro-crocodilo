@@ -362,4 +362,14 @@ export const initCustomBlocks = () => {
   javascriptGenerator.forBlock["stop_moving"] = function (block: any) {
     return 'await window.stopMoving();\n';
   };
+
+  // Генератор кода для блока "Значение таймера в мс"
+  javascriptGenerator.forBlock["timer"] = function (block: any) {
+    return ["Date.now() - __timerStart", javascriptGenerator.ORDER_ATOMIC];
+  };
+
+  // Генератор кода для блока "Сброс таймера"
+  javascriptGenerator.forBlock["timer_reset"] = function (block: any) {
+    return "__timerStart = Date.now();\n";
+  };
 };
