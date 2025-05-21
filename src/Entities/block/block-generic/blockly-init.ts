@@ -64,7 +64,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#077e07");
-      this.setTooltip("Движение");
+      this.setTooltip("Устанавливает текущее значение мотору");
     }
   };
 
@@ -85,7 +85,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#077e07");
-      this.setTooltip("Захват объекта интереса");
+      this.setTooltip("Захватывает объект интереса");
     }
   };
 
@@ -103,11 +103,11 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#077e07");
-      this.setTooltip("Написать сообщение в отладочное окно");
+      this.setTooltip("Пишет сообщение в отладочное окно");
     }
   };
 
-  // Поворот направо
+  // TODO: Поворот направо
   Blockly.Blocks["turn_right"] = {
     init: function () {
       this.appendDummyInput().appendField("Поворот направо. На")
@@ -117,11 +117,11 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#77a877");
-      this.setTooltip("Поворот направо");
+      this.setTooltip("Поворачивает направо на заданный угол");
     },
   };
 
-  // Поворот налево
+  // TODO: Поворот налево
   Blockly.Blocks["turn_left"] = {
     init: function () {
       this.appendDummyInput().appendField("Поворот налево. На")
@@ -131,7 +131,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#77a877");
-      this.setTooltip("Поворот налево");
+      this.setTooltip("Поворачивает налево на заданный угол");
     },
   };
 
@@ -144,7 +144,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#77a877");
-      this.setTooltip("Движение вперед, пока условие выполняется");
+      this.setTooltip("Устанавливает текущее значение скорости");
     }
   };
   Blockly.Blocks["stop_moving"] = {
@@ -156,12 +156,13 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null); // Вход сверху (любой тип)
       this.setNextStatement(true, null); // Выход снизу (любой тип)
       this.setColour("#77a877");
-      this.setTooltip("Остановка движения");
+      this.setTooltip("Останавливает движение");
     },
   };
 
   // УСЛОВИЯ
 
+  // TODO: Снести как появится датчик стены
   Blockly.Blocks['condition_stub'] = {
     init: function () {
       // Добавляем выпадающий список
@@ -181,36 +182,54 @@ export const initCustomBlocks = () => {
     }
   };
 
-  // Детектирование стен с условием расстояния
+  // TODO: Детектирование стен с условием расстояния
+  // Blockly.Blocks['wall_detect'] = {
+  //   init: function () {
+  //     this.appendDummyInput()
+  //       .appendField('Стена')
+  //       .appendField(new Blockly.FieldDropdown([
+  //         ['спереди', 'forward'],
+  //         ['сзади', 'back'],
+  //         ['справа', 'right'],
+  //         ['слева', 'left']
+  //       ]), 'DIRECTION')
+  //       .appendField(new Blockly.FieldDropdown([
+  //         ['есть', 'TRUE'],
+  //         ['нет', 'FALSE']
+  //       ]), 'EXPECTED')
+  //     this.appendDummyInput()
+  //       .appendField('на расстоянии')
+  //       .appendField(new Blockly.FieldDropdown([
+  //         ['=', '=='],
+  //         ['≠', '!='],
+  //         ['<', '<'],
+  //         ['≤', '<='],
+  //         ['>', '>'],
+  //         ['≥', '>=']
+  //       ]), 'OPERATOR')
+  //       .appendField(new Blockly.FieldNumber(1), 'DISTANCE');
+  //
+  //     this.setOutput(true, 'Boolean');
+  //     this.setColour("#95325a");
+  //     this.setTooltip('Проверяет наличие стены с заданной стороны на');
+  //   }
+  // };
+  // TODO: Попробовать с эти если слишком сложно, то ток который выше
   Blockly.Blocks['wall_detect'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('Стена')
-        .appendField(new Blockly.FieldDropdown([
-          ['спереди', 'forward'],
-          ['сзади', 'back'],
-          ['справа', 'right'],
-          ['слева', 'left']
-        ]), 'DIRECTION')
-        .appendField(new Blockly.FieldDropdown([
-          ['есть', 'TRUE'],
-          ['нет', 'FALSE']
-        ]), 'EXPECTED')
-      this.appendDummyInput()
-        .appendField('на расстоянии')
-        .appendField(new Blockly.FieldDropdown([
-          ['=', '=='],
-          ['≠', '!='],
-          ['<', '<'],
-          ['≤', '<='],
-          ['>', '>'],
-          ['≥', '>=']
-        ]), 'OPERATOR')
-        .appendField(new Blockly.FieldNumber(1), 'DISTANCE');
+          .appendField('Стена')
+          .appendField(new Blockly.FieldDropdown([
+            ['спереди', 'forward'],
+            ['сзади', 'back'],
+            ['справа', 'right'],
+            ['слева', 'left']
+          ]), 'DIRECTION')
+          .appendField('на расстоянии')
 
-      this.setOutput(true, 'Boolean');
+      this.setOutput(true, 'Number');
       this.setColour("#95325a");
-      this.setTooltip('Условие на обнаружение стены и расстояние до неё');
+      this.setTooltip('Проверяет наличие стены с заданной стороны');
     }
   };
 
@@ -228,7 +247,7 @@ export const initCustomBlocks = () => {
 
       this.setOutput(true, 'Boolean');
       this.setColour("#95325a");
-      this.setTooltip('Условие на обнаружение линии');
+      this.setTooltip('Проверяет наличие черной линии перед роботом');
     }
   };
 
@@ -260,7 +279,7 @@ export const initCustomBlocks = () => {
 
       this.setOutput(true, 'Number');
       this.setColour("#95325a");
-      this.setTooltip('Получение значения таймера');
+      this.setTooltip('Возвращает значения таймера');
     }
   };
 
@@ -270,10 +289,10 @@ export const initCustomBlocks = () => {
       this.appendDummyInput().appendField("Сброс таймера");
 
       // Настраиваем соединения
-      this.setPreviousStatement(true, null); // Вход сверху (любой тип)
-      this.setNextStatement(true, null); // Выход снизу (любой тип)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
       this.setColour("#95325a");
-      this.setTooltip('Cброс таймера до 0 мс');
+      this.setTooltip('Сбрасывает значение таймера до 0 мс');
     }
   };
 
@@ -285,7 +304,7 @@ export const initCustomBlocks = () => {
       // Настраиваем соединения
       this.setOutput(true, 'Number');
       this.setColour("#95325a");
-      this.setTooltip('Получение значения энкодера');
+      this.setTooltip('Возвращает значение энкодера');
     }
   };
 
@@ -295,10 +314,10 @@ export const initCustomBlocks = () => {
       this.appendDummyInput().appendField("Сброс энкодера");
 
       // Настраиваем соединения
-      this.setPreviousStatement(true, null); // Вход сверху (любой тип)
-      this.setNextStatement(true, null); // Выход снизу (любой тип)
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
       this.setColour("#95325a");
-      this.setTooltip('Cброс энкодера до 0');
+      this.setTooltip('Сбрасывает значение энкодера до 0');
     }
   };
 
