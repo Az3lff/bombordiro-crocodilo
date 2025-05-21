@@ -158,11 +158,10 @@ const handleRunClick = async () => {
     console.log("🔁 Blockly JS Code:", code);
     setCode(code);
 
-    // 🔹 Старт Effector-таймера (обнуляет и запускает отсчёт)
-    timerStarted();
+    // 🔹 Установка стартового времени — теперь без effector
+    (window as any).__timerStart = Date.now();
 
     const wrappedCode = `
-      let __timerStart = Date.now();
       return (async () => {
         ${code}
       })();

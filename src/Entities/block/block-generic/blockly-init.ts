@@ -363,13 +363,28 @@ export const initCustomBlocks = () => {
     return 'await window.stopMoving();\n';
   };
 
-  // Генератор кода для блока "Значение таймера в мс"
+  // Значение таймера
   javascriptGenerator.forBlock["timer"] = function (block: any) {
-    return ["Date.now() - __timerStart", javascriptGenerator.ORDER_ATOMIC];
+    return [`(Date.now() - window.__timerStart)`, javascriptGenerator.ORDER_ATOMIC];
   };
 
-  // Генератор кода для блока "Сброс таймера"
-  javascriptGenerator.forBlock["timer_reset"] = function (block: any) {
-    return "__timerStart = Date.now();\n";
+  // Сброс таймера
+  javascriptGenerator.forBlock["timer_reset"] = function () {
+    return "window.__timerStart = performance.now();\n";
   };
+
+  javascriptGenerator.forBlock["controls_whileUntil"] = function (block) {
+    const until = block.getFieldValue("MODE") === "UNTIL";
+    const conditionCode = javascriptGenerator.valueToCode(block, "BOOL", javascriptGenerator.ORDER_NONE) || "false";
+    const branchCode = javascriptGenerator.statementToCode(block, "DO");
+    const condition = until ? `!(${conditionCode})` : conditionCode;
+
+    return `
+    while (${condition}) {
+      ${branchCode}
+      await window.delay(0); // 🔹 предотвращает блокировку event loop
+    }
+  `;
+  };
+
 };
