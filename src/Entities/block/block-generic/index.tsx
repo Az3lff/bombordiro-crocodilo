@@ -73,7 +73,7 @@ const BlocklyComponent = () => {
         contents: [
           { kind: "block", type: "controls_if" },
           { kind: "block", type: "logic_compare" },
-          //{ kind: "block", type: "math_number" },
+          { kind: "block", type: "math_number" },
         ],
       },
       {
@@ -87,7 +87,7 @@ const BlocklyComponent = () => {
     ],
   };
 
-// Продвинутый toolbox для 3-х колесного робота
+// Продвинутый toolbox
   const toolbox = {
     kind: "categoryToolbox",
     contents: [
@@ -98,6 +98,9 @@ const BlocklyComponent = () => {
         colour: "#95325a",
         contents: [
           { kind: "block", type: "timer" },
+          { kind: "block", type: "timer_reset" },
+          { kind: "block", type: "encoder" },
+          { kind: "block", type: "encoder_reset" },
           { kind: "block", type: "wall_detect" },
           { kind: "block", type: "line_detect" },
         ],
