@@ -11,11 +11,11 @@ window.movePlayerForward = () => {
 window.stopMoving = () => {
   stopMoving();
 }
-window.turnLeft = () => {
-  turnLeft();
+window.turnLeft = (angle: number) => {
+  turnLeft(angle);
 }
-window.turnRight = () => {
-  turnRight();
+window.turnRight = (angle: number) => {
+  turnRight(angle);
 }
 window.setMotorSpeed = ({ side, speed }: { side: string, speed: number }) => {
   if (side === 'LEFT') {
@@ -337,14 +337,16 @@ export const initCustomBlocks = () => {
   };
 
   javascriptGenerator.forBlock["turn_right"] = function (block: any) {
+    const angle = block.getFieldValue('ANGLE');
     return `await window.delay(400);
-            await window.turnRight();
+            await window.turnRight(${angle});
             await window.delay(400);`;
   };
 
   javascriptGenerator.forBlock["turn_left"] = function (block: any) {
+    const angle = block.getFieldValue('ANGLE');
     return `await window.delay(400);
-            await window.turnLeft();
+            await window.turnLeft(${angle});
             await window.delay(400);`;
   };
 
@@ -356,7 +358,7 @@ export const initCustomBlocks = () => {
   };
 
   javascriptGenerator.forBlock["stop_moving"] = function (block: any) {
-    return 'await window.stopMoving();\n';
+    return `window.setBothMotorSpeed(${0})`;
   };
 
   // Значение таймера
