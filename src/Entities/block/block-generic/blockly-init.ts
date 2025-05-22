@@ -59,12 +59,12 @@ export const initCustomBlocks = () => {
         .appendField("Мотор =")
         .appendField(new Blockly.FieldDropdown([["Левый", "LEFT"], ["Правый", "RIGHT"]]), "MOTOR")
         .appendField("Скорость =")
-        .appendField(new Blockly.FieldNumber(0), "SPEED");
+        .appendField(new Blockly.FieldNumber(0, -5, 5), "SPEED");
 
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#077e07");
-      this.setTooltip("Устанавливает текущее значение мотору");
+      this.setTooltip("Устанавливает текущее значение мотору.\nВ интервале от -5 до 5.\n*Отрицательное значение позволяют роботу ехать назад.");
     }
   };
 
@@ -85,25 +85,21 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#077e07");
-      this.setTooltip("Захватывает объект интереса");
+      this.setTooltip("Захватывает объект интереса.");
     }
   };
 
   // TODO: Написать сообщение в отладочное окно
   Blockly.Blocks["write_msg"] = {
     init: function () {
-      this.appendDummyInput()
-          .appendField("Написать :")
-          .appendField(new Blockly.FieldTextInput(""), "TEXT_1")
-      this.appendValueInput("NUMBER")
-          .setCheck("Number")
-      this.appendDummyInput()
-          .appendField(new Blockly.FieldTextInput(""), "TEXT_2");
+      this.appendValueInput("MESSAGE")
+          .setCheck("String")
+          .appendField("Написать :");
 
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#077e07");
-      this.setTooltip("Пишет сообщение в отладочное окно");
+      this.setTooltip("Пишет сообщение в отладочное окно.");
     }
   };
 
@@ -117,7 +113,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#77a877");
-      this.setTooltip("Поворачивает направо на заданный угол");
+      this.setTooltip("Поворачивает направо на заданный угол.");
     },
   };
 
@@ -131,7 +127,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#77a877");
-      this.setTooltip("Поворачивает налево на заданный угол");
+      this.setTooltip("Поворачивает налево на заданный угол.");
     },
   };
 
@@ -139,12 +135,12 @@ export const initCustomBlocks = () => {
     init: function () {
       this.appendDummyInput()
         .appendField("Движение. Скорость =")
-        .appendField(new Blockly.FieldNumber(0, 0, 10), "SPEED");
+        .appendField(new Blockly.FieldNumber(0, -5, 5), "SPEED");
 
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#77a877");
-      this.setTooltip("Устанавливает текущее значение скорости");
+      this.setTooltip("Устанавливает текущее значение скорости.\nВ интервале от -5 до 5.\n*Отрицательное значение позволяют роботу ехать назад.");
     }
   };
   Blockly.Blocks["stop_moving"] = {
@@ -156,7 +152,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null); // Вход сверху (любой тип)
       this.setNextStatement(true, null); // Выход снизу (любой тип)
       this.setColour("#77a877");
-      this.setTooltip("Останавливает движение");
+      this.setTooltip("Останавливает движение.");
     },
   };
 
@@ -247,7 +243,7 @@ export const initCustomBlocks = () => {
 
       this.setOutput(true, 'Boolean');
       this.setColour("#95325a");
-      this.setTooltip('Проверяет наличие черной линии перед роботом');
+      this.setTooltip('Проверяет наличие черной линии перед роботом.');
     }
   };
 
@@ -279,7 +275,7 @@ export const initCustomBlocks = () => {
 
       this.setOutput(true, 'Number');
       this.setColour("#95325a");
-      this.setTooltip('Возвращает значения таймера');
+      this.setTooltip('Возвращает значения таймера.');
     }
   };
 
@@ -292,7 +288,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#95325a");
-      this.setTooltip('Сбрасывает значение таймера до 0 мс');
+      this.setTooltip('Сбрасывает значение таймера до 0 мс.');
     }
   };
 
@@ -304,7 +300,7 @@ export const initCustomBlocks = () => {
       // Настраиваем соединения
       this.setOutput(true, 'Number');
       this.setColour("#95325a");
-      this.setTooltip('Возвращает значение энкодера');
+      this.setTooltip('Возвращает значение энкодера.');
     }
   };
 
@@ -317,7 +313,7 @@ export const initCustomBlocks = () => {
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
       this.setColour("#95325a");
-      this.setTooltip('Сбрасывает значение энкодера до 0');
+      this.setTooltip('Сбрасывает значение энкодера до 0.');
     }
   };
 
