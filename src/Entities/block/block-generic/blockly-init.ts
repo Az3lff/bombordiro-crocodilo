@@ -362,4 +362,29 @@ export const initCustomBlocks = () => {
   javascriptGenerator.forBlock["stop_moving"] = function (block: any) {
     return 'await window.stopMoving();\n';
   };
+
+  // Значение таймера
+  javascriptGenerator.forBlock["timer"] = function (block: any) {
+    return [`(Date.now() - window.__timerStart)`, javascriptGenerator.ORDER_ATOMIC];
+  };
+
+  // Сброс таймера
+  javascriptGenerator.forBlock["timer_reset"] = function () {
+    return "window.__timerStart = performance.now();\n";
+  };
+
+  javascriptGenerator.forBlock["controls_whileUntil"] = function (block) {
+    const until = block.getFieldValue("MODE") === "UNTIL";
+    const conditionCode = javascriptGenerator.valueToCode(block, "BOOL", javascriptGenerator.ORDER_NONE) || "false";
+    const branchCode = javascriptGenerator.statementToCode(block, "DO");
+    const condition = until ? `!(${conditionCode})` : conditionCode;
+
+    return `
+    while (${condition}) {
+      ${branchCode}
+      await window.delay(0); // 🔹 предотвращает блокировку event loop
+    }
+  `;
+  };
+
 };

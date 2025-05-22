@@ -28,9 +28,6 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
 
   const [debugRay, setDebugRay] = useState<JSX.Element | null>(null);
 
-  const leftMotorSpeed = motorsStore.getLeftSpeed();
-  const rightMotorSpeed = motorsStore.getRightSpeed();
-
   const sensorVisibility = useUnit($sensorVisible);
 
   useEffect(() => {
@@ -125,6 +122,9 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
 
 
   useFrame(() => {
+    const leftMotorSpeed = motorsStore.getLeftSpeed();
+    const rightMotorSpeed = motorsStore.getRightSpeed();
+
     const { moveForward, moveBackward, moveLeft, moveRight } = getKeys();
     const rotationSpeed = 3;
     const acceleration = 10;
