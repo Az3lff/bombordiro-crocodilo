@@ -8,6 +8,7 @@ import * as ru from 'blockly/msg/ru';
 
 import { useUnit } from "effector-react";
 import { setBlocklyCode } from "../store/store";
+import { timerStarted } from '../timer/store';
 
 const BlocklyComponent = () => {
   const [workspace, setWorkspace] = useState<any | null>(null);
@@ -76,7 +77,10 @@ const BlocklyComponent = () => {
         contents: [
           { kind: "block", type: "controls_if" },
           { kind: "block", type: "logic_compare" },
+          { kind: "block", type: "logic_operation" },
+          { kind: "block", type: "text_join" },
           { kind: "block", type: "math_number" },
+          { kind: "block", type: "text" },
         ],
       },
       {
@@ -156,6 +160,9 @@ const handleRunClick = async () => {
     const code = javascriptGenerator.workspaceToCode(workspace);
     console.log("🔁 Blockly JS Code:", code);
     setCode(code);
+
+    // 🔹 Установка стартового времени — теперь без effector
+    (window as any).__timerStart = Date.now();
 
     const wrappedCode = `
       return (async () => {

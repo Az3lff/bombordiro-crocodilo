@@ -1,28 +1,28 @@
 import { createEvent, createStore, sample } from "effector";
 
-// Стор для хранения ссылки на игрока
 export const $playerRef = createStore<any>(null);
 export const setPlayerRef = createEvent<any>();
 export const startMoving = createEvent();
 export const stopMoving = createEvent();
-export const turnLeft = createEvent();
-export const turnRight = createEvent();
+export const turnLeft = createEvent<number>();
+export const turnRight = createEvent<number>();
 
 $playerRef.on(setPlayerRef, (_, ref) => ref);
 
 sample({
   source: $playerRef,
   clock: turnLeft,
-  filter: (ref): ref is { turnLeft: () => void } => !!ref && typeof ref.turn === "function",
-  fn: (player) => {
-    player.turn('LEFT');
+  filter: (ref): ref is { turnLeft: (angle: number) => void } => !!ref,
+  fn: (player, angle) => {
+    player.turnLeft(angle);
   },
 });
+
 sample({
   source: $playerRef,
   clock: turnRight,
-  filter: (ref): ref is { turnLeft: () => void } => !!ref && typeof ref.turn === "function",
-  fn: (player) => {
-    player.turn('RIGHT');
+  filter: (ref): ref is { turnRight: (angle: number) => void } => !!ref,
+  fn: (player, angle) => {
+    player.turnRight(angle);
   },
 });
