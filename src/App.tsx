@@ -1,12 +1,13 @@
-import BlocklyComponent from "./Entities/block/block-generic";
-import Scene from "./Features/Scene";
-
+// import BlocklyComponent from "./Entities/block/block-generic";
+// import Scene from "./Features/Scene";
+import AuthPage from "./Pages/auth";
 function App() {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "auto auto" }}>
-      <BlocklyComponent />
-      <Scene />
-    </div>
+    <AuthPage />
+    // <div style={{ display: "grid", gridTemplateColumns: "auto auto" }}>
+    //   <BlocklyComponent />
+    //   <Scene />
+    // </div>
   );
 }
 
