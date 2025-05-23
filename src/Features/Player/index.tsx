@@ -10,7 +10,8 @@ import { $sensorVisible } from "../../Entities/sensor-control/store";
 
 interface PlayerRef {
   moveForward: () => Promise<boolean>;
-  turn: (direction: 'LEFT' | 'RIGHT') => Promise<void>;
+  turnLeft: (angle: number) => Promise<void>;
+  turnRight: (angle: number) => Promise<void>;
 }
 
 export const Player = forwardRef<PlayerRef>((props, ref) => {
@@ -27,9 +28,6 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
   const prevTurns = useRef({ right: false, left: false, forward: false });
 
   const [debugRay, setDebugRay] = useState<JSX.Element | null>(null);
-
-  const leftMotorSpeed = motorsStore.getLeftSpeed();
-  const rightMotorSpeed = motorsStore.getRightSpeed();
 
   const sensorVisibility = useUnit($sensorVisible);
 
@@ -125,6 +123,9 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
 
 
   useFrame(() => {
+    const leftMotorSpeed = motorsStore.getLeftSpeed();
+    const rightMotorSpeed = motorsStore.getRightSpeed();
+
     const { moveForward, moveBackward, moveLeft, moveRight } = getKeys();
     const rotationSpeed = 3;
     const acceleration = 10;
@@ -196,12 +197,25 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
       return true;
     },
 
-    async turn(direction: 'LEFT' | 'RIGHT') {
+    async turnLeft(angle: number) {
       if (!modelRef.current) return;
 
-      const angle = direction === 'LEFT' ? Math.PI / 2 : -Math.PI / 2;
+      const angleRad = THREE.MathUtils.degToRad(angle);
       const steps = 10;
-      const stepAngle = angle / steps;
+      const stepAngle = angleRad / steps;
+      const delay = 300 / steps;
+
+      for (let i = 0; i < steps; i++) {
+        modelRef.current.rotation.y += stepAngle;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    },
+    async turnRight(angle: number) {
+      if (!modelRef.current) return;
+
+      const angleRad = THREE.MathUtils.degToRad(-angle);
+      const steps = 10;
+      const stepAngle = angleRad / steps;
       const delay = 300 / steps;
 
       for (let i = 0; i < steps; i++) {
