@@ -17,15 +17,14 @@ func NewHandler(service *auth.Service) *Handler {
 	}
 }
 
-// admin
-func (h *Handler) AdminSignUp(c *fiber.Ctx) (err error) {
-	var request models.AdminSignUpRequest
+func (h *Handler) SignUp(c *fiber.Ctx) (err error) {
+	var request models.SignUpRequest
 
 	if err := c.BodyParser(&request); err != nil {
 		return err
 	}
 
-	resp, err := h.service.AdminSignUp(c.Context(), request)
+	resp, err := h.service.SignUp(c.Context(), request)
 	if err != nil {
 		return err
 	}
@@ -33,14 +32,14 @@ func (h *Handler) AdminSignUp(c *fiber.Ctx) (err error) {
 	return c.JSON(resp)
 }
 
-func (h *Handler) AdminSignIn(c *fiber.Ctx) (err error) {
-	var request models.AdminSignInRequest
+func (h *Handler) SignIn(c *fiber.Ctx) (err error) {
+	var request models.SignInRequest
 
 	if err := c.BodyParser(&request); err != nil {
 		return err
 	}
 
-	resp, err := h.service.AdminSignIn(c.Context(), request)
+	resp, err := h.service.SignIn(c.Context(), request)
 	if err != nil {
 		return err
 	}
@@ -48,33 +47,21 @@ func (h *Handler) AdminSignIn(c *fiber.Ctx) (err error) {
 	return c.JSON(resp)
 }
 
-// client
-func (h *Handler) ClientSignUp(c *fiber.Ctx) (err error) {
-	var request models.ClientSignUpRequest
-
-	if err := c.BodyParser(&request); err != nil {
-		return err
-	}
-
-	resp, err := h.service.ClientSignUp(c.Context(), request)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(resp)
-}
-
-func (h *Handler) ClientSignIn(c *fiber.Ctx) (err error) {
-	var request models.ClientSignInRequest
-
-	if err := c.BodyParser(&request); err != nil {
-		return err
-	}
-
-	resp, err := h.service.ClientSignIn(c.Context(), request)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(resp)
-}
+//func (h *Handler) GenerateToken(c *fiber.Ctx) (err error) {
+//	var request models.PostInviteTokenRequest
+//
+//	_ = c.Locals("user")
+//	//if !ok{
+//	//	return c.SendStatus(fiber.StatusUnauthorized)
+//	//}
+//
+//	request.Role = c.Query("role")
+//	request.AdminID = 5
+//
+//	resp, err := h.service.GenerateToken(c.Context(), request)
+//	if err != nil {
+//		return err
+//	}
+//
+//	return c.JSON(resp)
+//}

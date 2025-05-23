@@ -28,16 +28,7 @@
       "ConnMaxIdleTime": 20
     }
   },
-  "Redis": {
-    "Host": "localhost",
-    "Port": "6379",
-    "MinIdleConns": 10,
-    "PoolSize": 10,
-    "PoolTimeout": 10,
-    "UseCertificates": false,
-    "InsecureSkipVerify": false,
-    "DB": 0
-  },
+  
   "HTTP": {
     "Cors": {
       "AllowOrigins": "*",

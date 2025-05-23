@@ -1,6 +1,6 @@
-CREATE SCHEMA IF NOT EXISTS admin;
-
 create SCHEMA IF NOT EXISTS list;
+
+create SCHEMA IF NOT EXISTS "user";
 
 CREATE TABLE IF NOT EXISTS list.users_roles
 (
@@ -10,18 +10,15 @@ CREATE TABLE IF NOT EXISTS list.users_roles
     CONSTRAINT users_roles_role_key UNIQUE (role)
 );
 
-
-create table if not exists admin.admin
-(
-    id serial PRIMARY KEY,
+create table if not exists "user"."user"(
+    id serial primary key,
     login text not null,
     password text not null,
     first_name text not null,
-    second_name text not null,
-    image_url text default null
+    second_name text not null
 );
 
-CREATE TABLE IF NOT EXISTS admin.invite
+CREATE TABLE IF NOT EXISTS "user".invite
 (
     token character varying  NOT NULL,
     created_by integer NOT NULL,
@@ -31,7 +28,7 @@ CREATE TABLE IF NOT EXISTS admin.invite
     role character varying  NOT NULL,
     CONSTRAINT invite_token_key UNIQUE (token),
     CONSTRAINT invite_created_by_fkey FOREIGN KEY (created_by)
-    REFERENCES admin.admin (id) MATCH SIMPLE
+    REFERENCES "user"."user" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION,
     CONSTRAINT invite_role_fkey FOREIGN KEY (role)
@@ -39,21 +36,14 @@ CREATE TABLE IF NOT EXISTS admin.invite
     ON UPDATE NO ACTION
     ON DELETE NO ACTION,
     CONSTRAINT invite_used_by_fkey FOREIGN KEY (used_by)
-    REFERENCES admin.admin (id) MATCH SIMPLE
+    REFERENCES "user"."user" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
 );
 
-CREATE SCHEMA IF NOT EXISTS student;
-
-create table if not exists student.student
-(
-    id serial PRIMARY KEY,
-    login text not null,
-    password text not null,
-    first_name text not null,
-    second_name text not null,
-    image_url text default null
+CREATE TABLE IF NOT EXISTS "user".users_role(
+    user_id integer not null,
+    role text not null
 );
 
 create schema if not exists content;

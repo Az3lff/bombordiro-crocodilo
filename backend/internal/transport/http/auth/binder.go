@@ -21,22 +21,21 @@ func NewBinder(server *http.Server, handler *Handler) *Binder {
 func (b *Binder) BindRoutes(_ context.Context) {
 
 	{
-		client := b.server.Group("/client")
-		v1 := client.Group("/v1")
+		api := b.server.Group("/api")
+		v1 := api.Group("/v1")
 
 		auth := v1.Group("/auth")
 
-		auth.Post("/sign-up", b.handler.ClientSignUp)
-		auth.Post("/sign-in", b.handler.ClientSignIn)
+		auth.Post("/sign-up", b.handler.SignUp)
+		auth.Post("/sign-in", b.handler.SignIn)
 	}
 
 	{
-		admin := b.server.Group("/admin")
-		v1 := admin.Group("/v1")
+		/*admin := b.server.Group("/admin")*/
+		/*v1 := admin.Group("/v1")*/
 
-		auth := v1.Group("/auth")
+		/*auth := v1.Group("/auth")*/
 
-		auth.Post("/sign-up", b.handler.AdminSignUp)
-		auth.Post("/sign-in", b.handler.AdminSignIn)
+		/*auth.Post("/token", b.handler.GenerateToken)*/
 	}
 }
