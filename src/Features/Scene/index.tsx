@@ -8,19 +8,7 @@ import CameraControls from "../Camera-controls";
 import { setPlayerRef, } from "../../Entities/block/player/store/store";
 import { $sensorVisible, setIsSensorVisible } from "../../Entities/sensor-control/store";
 import { useUnit } from "effector-react";
-
-declare global {
-  interface Window {
-    player: any;
-    movePlayerForward: any;
-    stopMoving: any
-    turns: any
-    turnRight: any
-    turnLeft: any
-    setMotorSpeed: any
-    setBothMotorSpeed: any
-  }
-}
+import CollapsiblePanel from "../../Widgets/Debug-window/ui";
 
 export default function Scene() {
   const controlsRef = useRef<any>(null);
@@ -50,15 +38,16 @@ export default function Scene() {
     >
       <button style={{
         position: 'absolute',
-        right: 20, // Уменьшил отступ для мобильности
-        top: 20,   // Добавил отступ сверху
-        zIndex: 10, // Увеличил z-index
+        right: 20,
+        top: 20,
+        zIndex: 10,
         padding: '8px 16px',
         background: '#ffffff',
         border: '1px solid #ccc',
         borderRadius: '4px',
         cursor: 'pointer'
       }} onClick={() => setIsSensorVisible(!sensorVisibility)}>{sensorVisibility ? 'Скрыть датчик стены' : 'Отобразить датчик стены'}</button>
+      <CollapsiblePanel />
       <Canvas
         shadows
         camera={{

@@ -3,6 +3,7 @@ import { javascriptGenerator, Order } from "blockly/javascript";
 import "blockly/blocks";
 import { startMoving, stopMoving, turnLeft, turnRight } from "../player/store/store";
 import { motorsStore } from "../speed/store";
+import { addMessage } from "../../debug-window/store";
 // import { setSpeed } from "../speed/store";
 
 window.movePlayerForward = () => {
@@ -29,9 +30,11 @@ window.setBothMotorSpeed = (speed: number) => {
   motorsStore.setBothSpeeds({ left: speed, right: speed })
 }
 
-(window as any).delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-(window as any).setBothSpeeds = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-// (window as any).setSpeed = (speed: number) => { setSpeed(speed) };
+window.delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+window.setBothSpeeds = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+window.addMessage = (message: string[]) => {
+  addMessage(message)
+}
 
 // Расширяем типы для TypeScript
 declare module "blockly/javascript" {
@@ -93,8 +96,8 @@ export const initCustomBlocks = () => {
   Blockly.Blocks["write_msg"] = {
     init: function () {
       this.appendValueInput("MESSAGE")
-          .setCheck("String")
-          .appendField("Написать :");
+        .setCheck("String")
+        .appendField("Написать :");
 
       this.setPreviousStatement(true, null);
       this.setNextStatement(true, null);
@@ -214,14 +217,14 @@ export const initCustomBlocks = () => {
   Blockly.Blocks['wall_detect'] = {
     init: function () {
       this.appendDummyInput()
-          .appendField('Стена')
-          .appendField(new Blockly.FieldDropdown([
-            ['спереди', 'forward'],
-            ['сзади', 'back'],
-            ['справа', 'right'],
-            ['слева', 'left']
-          ]), 'DIRECTION')
-          .appendField('на расстоянии')
+        .appendField('Стена')
+        .appendField(new Blockly.FieldDropdown([
+          ['спереди', 'forward'],
+          ['сзади', 'back'],
+          ['справа', 'right'],
+          ['слева', 'left']
+        ]), 'DIRECTION')
+        .appendField('на расстоянии')
 
       this.setOutput(true, 'Number');
       this.setColour("#95325a");
@@ -357,8 +360,45 @@ export const initCustomBlocks = () => {
   `;
   };
 
+  javascriptGenerator.forBlock["write_msg"] = function (block) {
+    const msgBlock = block.getInputTargetBlock('MESSAGE');
+
+    // Обработка text_join
+    if (msgBlock && msgBlock.type === 'text_join') {
+      const items = [];
+      let i = 0;
+      while (true) {
+        const inputName = 'ADD' + i;
+        if (!msgBlock.getInput(inputName)) break;
+
+        const itemCode = javascriptGenerator.valueToCode(
+          msgBlock,
+          inputName,
+          javascriptGenerator.ORDER_NONE
+        ) || "''";
+
+        items.push(itemCode);
+        i++;
+      }
+
+      if (items.length > 0) {
+        console.log(items)
+        return `await window.addMessage([${items}])\n`;
+      }
+    }
+
+    // Обычная обработка
+    const message = javascriptGenerator.valueToCode(
+      block,
+      'MESSAGE',
+      javascriptGenerator.ORDER_ATOMIC
+    ) || "''";
+
+     return ``;
+  };
+
   javascriptGenerator.forBlock["stop_moving"] = function (block: any) {
-    return `window.setBothMotorSpeed(${0})`;
+    return `window.setBothMotorSpeed(${0})\n`;
   };
 
   // Значение таймера

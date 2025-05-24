@@ -9,6 +9,7 @@ import * as ru from 'blockly/msg/ru';
 import { useUnit } from "effector-react";
 import { setBlocklyCode } from "../store/store";
 import { timerStarted } from '../timer/store';
+import { clearAllMessages } from "../../debug-window/store";
 
 const BlocklyComponent = () => {
   const [workspace, setWorkspace] = useState<any | null>(null);
@@ -158,6 +159,7 @@ const BlocklyComponent = () => {
 const handleRunClick = async () => {
   if (workspace) {
     const code = javascriptGenerator.workspaceToCode(workspace);
+    clearAllMessages()
     console.log("🔁 Blockly JS Code:", code);
     setCode(code);
 
