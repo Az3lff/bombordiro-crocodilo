@@ -31,6 +31,20 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
 
   const sensorVisibility = useUnit($sensorVisible);
 
+  const INITIAL_POSITION = [10.5, 0.2, 1.1] as [number, number, number];
+  const INITIAL_ROTATION = Math.PI / 2;
+
+  const resetPosition = () => {
+    if (playerRef.current) {
+      playerRef.current.setNextKinematicTranslation(INITIAL_POSITION);
+      playerRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      playerRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    }
+    if (modelRef.current) {
+      modelRef.current.rotation.y = INITIAL_ROTATION;
+    }
+  };
+
   useEffect(() => {
     if (!sensorVisibility) {
       setDebugRay(null)
@@ -196,7 +210,7 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
       await new Promise(resolve => setTimeout(resolve, 500));
       return true;
     },
-
+    resetPosition,
     async turnLeft(angle: number) {
       if (!modelRef.current) return;
 
@@ -224,18 +238,6 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
       }
     },
 
-    // drive(leftSpeed: number, rightSpeed: number) {
-    //   leftMotorSpeedRef.current = leftSpeed;
-    //   rightMotorSpeedRef.current = rightSpeed;
-    // },
-
-
-    // checkPath(side: 'right') {
-    //   switch (side) {
-    //     case 'right': return checkDirection(new THREE.Vector3(1, 0, 0), 1.5);
-    //     default: return false;
-    //   }
-    // }
   }));
 
   return (

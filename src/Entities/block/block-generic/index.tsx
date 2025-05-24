@@ -10,53 +10,30 @@ import { useUnit } from "effector-react";
 import { setBlocklyCode } from "../store/store";
 import { timerStarted } from '../timer/store';
 import { clearAllMessages } from "../../debug-window/store";
+import { initializePauseControls } from "../../pause-control/init";
+import { PauseResumeControls } from "../../../Widgets/Pause-controls/ui";
+import styled from "styled-components";
+import { resetPlayerPosition } from "../player/store/store";
 
 const BlocklyComponent = () => {
   const [workspace, setWorkspace] = useState<any | null>(null);
   const setCode = useUnit(setBlocklyCode);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const executionRef = useRef<{ abort: boolean }>({ abort: false });
 
   useEffect(() => {
     Blockly.setLocale(ru as unknown as { [key: string]: string });
     initCustomBlocks();
+    initializePauseControls()
+
+    window.abortExecution = () => {
+      executionRef.current.abort = true;
+      window.__isPaused = false;
+      window.__pauseResolvers = [];
+    };
   }, []);
 
-  // const toolbox = {
-  //   kind: "categoryToolbox",
-  //   contents: [
-  //     {
-  //       kind: "category",
-  //       name: "Логика",
-  //       colour: "#5C81A6",
-  //       contents: [
-  //         { kind: "block", type: "controls_if" },
-  //         { kind: "block", type: "logic_compare" },
-  //         { kind: "block", type: "timer" },
-  //         { kind: "block", type: "wall_detect" },
-  //         { kind: "block", type: "line_detect" },
-  //         { kind: "block", type: "math_number" }
-  //       ],
-  //     },
-  //     {
-  //       kind: "category",
-  //       name: "Циклы",
-  //       colour: "#5CA65C",
-  //       contents: [
-  //         { kind: "block", type: "controls_whileUntil" },
-  //       ]
-  //     },
-  //     {
-  //       kind: "category",
-  //       name: "Действия",
-  //       colour: "#5CA65C",
-  //       contents: [
-  //         { kind: "block", type: "move" },
-  //         { kind: "block", type: "capture" }
-  //       ],
-  //     },
-  //   ],
-  // };
-
-  // Базовый toolbox (всегда доступен)
   const baseToolbox = {
     kind: "categoryToolbox",
     contents: [
@@ -103,7 +80,7 @@ const BlocklyComponent = () => {
     ],
   };
 
-// Продвинутый toolbox
+  // Продвинутый toolbox
   const toolbox = {
     kind: "categoryToolbox",
     contents: [
@@ -156,30 +133,68 @@ const BlocklyComponent = () => {
     },
   };
 
-const handleRunClick = async () => {
-  if (workspace) {
-    const code = javascriptGenerator.workspaceToCode(workspace);
-    clearAllMessages()
-    console.log("🔁 Blockly JS Code:", code);
-    setCode(code);
+  const handlePause = () => {
+    console.log("Execution paused");
+  };
 
-    // 🔹 Установка стартового времени — теперь без effector
-    (window as any).__timerStart = Date.now();
+  const handleResume = () => {
+    console.log("Execution resumed");
+  };
+
+  const handleReset = () => {
+    console.log("Execution aborted");
+    window.abortExecution();
+    resetPlayerPosition()
+    window.__shouldAbort = true;
+    setIsRunning(false);
+  };
+
+  const handleRunClick = async () => {
+    if (!workspace) return;
+
+    executionRef.current.abort = false;
+    const generatedCode = javascriptGenerator.workspaceToCode(workspace);
+    clearAllMessages();
+    console.log("🔁 Generated Blockly JS Code:", generatedCode);
+    setCode(generatedCode);
+
+    window.__timerStart = Date.now();
+    window.__isPaused = false;
+    window.__pauseResolvers = [];
+    setIsRunning(true);
 
     const wrappedCode = `
-      return (async () => {
-        ${code}
-      })();
+      try {
+        ${generatedCode
+        .split('\n')
+        .filter(line => line.trim())
+        .map(line => `
+            if (window.__shouldAbort) throw new Error('Execution aborted');
+            await window.pauseIfNeeded();
+            ${line}
+          `)
+        .join('\n')}
+      } catch (e) {
+        if (e.message !== 'Execution aborted') {
+          console.error("Execution error:", e);
+        }
+        throw e;
+      }
     `;
 
     try {
-      const run = new Function(wrappedCode);
-      await run();
-    } catch (e) {
-      console.error("Ошибка при выполнении кода:", e);
+      window.__shouldAbort = false;
+      const asyncFunc = new Function('return (async () => {' + wrappedCode + '})()');
+      await asyncFunc();
+    } catch (e: any) {
+      if (e.message !== 'Execution aborted') {
+        console.error("Ошибка выполнения:", e);
+      }
+    } finally {
+      setIsRunning(false);
+      window.__shouldAbort = false;
     }
-  }
-};
+  };
 
   return (
     <div style={{ height: "100vh", width: "40vw", position: "relative", overflow: "hidden" }}>
@@ -190,22 +205,13 @@ const handleRunClick = async () => {
         className="fill-container"
         onWorkspaceChange={setWorkspace}
       />
-      <button
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          padding: "10px 16px",
-          backgroundColor: "#4CAF50",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer"
-        }}
-        onClick={handleRunClick}
-      >
-        ▶ Запустить
-      </button>
+      <PauseResumeControls
+        isRunning={isRunning}
+        onPause={handlePause}
+        onResume={handleResume}
+        onReset={handleReset}
+        onRun={handleRunClick}
+      />
     </div>
   );
 };

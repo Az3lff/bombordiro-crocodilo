@@ -11,4 +11,11 @@ interface Window {
     setBothSpeeds: any
     addMessage: any
     __timerStart: any
+    __isPaused: boolean;
+    __shouldAbort: boolean;
+    __pauseResolvers: (() => void)[];
+    pauseExecution: () => Promise<void>;
+    resumeExecution: () => void;
+    pauseIfNeeded: () => Promise<void>;
+    abortExecution: () => void;
 }

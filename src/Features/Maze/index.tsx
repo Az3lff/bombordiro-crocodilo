@@ -6,8 +6,6 @@ import * as THREE from "three";
 export default function Maze() {
   const { scene } = useGLTF("/models/wall_movement.glb");
 
-  console.log(scene)
-
   return (
     <>
       <RigidBody type="fixed" colliders="cuboid">

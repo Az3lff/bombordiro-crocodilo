@@ -6,8 +6,16 @@ export const startMoving = createEvent();
 export const stopMoving = createEvent();
 export const turnLeft = createEvent<number>();
 export const turnRight = createEvent<number>();
+export const resetPlayerPosition = createEvent();
 
-$playerRef.on(setPlayerRef, (_, ref) => ref);
+$playerRef
+  .on(setPlayerRef, (_, ref) => ref)
+  .on(resetPlayerPosition, (ref) => {
+    if (ref?.resetPosition) {
+      ref.resetPosition();
+    }
+    return ref;
+  });
 
 sample({
   source: $playerRef,
