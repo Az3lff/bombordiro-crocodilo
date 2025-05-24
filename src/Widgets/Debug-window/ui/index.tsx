@@ -7,6 +7,17 @@ const CollapsiblePanel = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const messages = useUnit($messageStore)
+    function formatTime(ms: number) {
+        const minutes = Math.floor(ms / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
+        const milliseconds = ms % 1000;
+
+        return [
+            String(minutes).padStart(2, '0'),
+            String(seconds).padStart(2, '0'),
+            String(milliseconds).padStart(3, '0')
+        ].join(':');
+    }
 
     return (
         <Container isCollapsed={isCollapsed}>
@@ -24,12 +35,15 @@ const CollapsiblePanel = () => {
             </div>
             {!isCollapsed && (
                 <div style={{ padding: '10px', color: '#fafafa', width: 500, overflowY: 'scroll', height: 349 }}>
-                    {messages.length ? messages?.map((message) => <div style={{ marginBottom: 10, display: 'flex', gap: 10 }}>
-                        <div>{(Date.now() - window.__timerStart)} ms:</div>
-                        {
-                            message?.map((el) => <div>{el}</div>)
-                        }
-                    </div>) : <div>Сообщений нет...</div>}
+                    {messages.length ? messages?.map((message) => {
+                        const timer = (Date.now() - window.__timerStart)
+                        return <div style={{ marginBottom: 10, display: 'flex', gap: 10 }}>
+                            <div>{formatTime(timer)}:</div>
+                            {
+                                message?.map((el) => <MessageBlock>{el}</MessageBlock>)
+                            }
+                        </div>
+                    }) : <div>Сообщений нет...</div>}
                 </div>
             )}
 
@@ -52,4 +66,8 @@ const Container = styled.div<ContainerProps>`
     z-index: 10;
     transition-duration: 500;
     height: ${(props) => props.isCollapsed ? '33px' : '400px'};
+`
+
+const MessageBlock = styled.div`
+    color: #0dff00;
 `
