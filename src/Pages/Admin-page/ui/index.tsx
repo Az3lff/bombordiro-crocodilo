@@ -1,5 +1,8 @@
+import GenerateTokenForm from "../../../Features/Admin";
 const AdminPanelPage = () => {
-    return <div>Тут типа админка если нужна будет</div>
+    return( 
+        <GenerateTokenForm />
+    )
 }
 
 export default AdminPanelPage;

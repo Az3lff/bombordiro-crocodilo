@@ -1,8 +1,15 @@
 import { BrowserRouter, Link } from "react-router-dom";
 import { AppRoutes } from "../route-config/config";
+import { useUnit } from 'effector-react';
+import { $isAuthenticated, $isAdmin, $userRole, userLoggedOut } from "../../Entities/session";
 
 function App() {
-
+  const isAuth = useUnit($isAuthenticated);
+  const isAdmin = useUnit($isAdmin);
+  console.log($userRole.getState());
+  const handleLogout = () => {
+    userLoggedOut();
+  }
   return (
     <div>
       Это временное решение потом удалим
@@ -11,15 +18,20 @@ function App() {
           <Link to='/'>
             <button>Игровое поле</button>
           </Link>
-          <Link to='/admin-panel'>
-            <button>Админка</button>
-          </Link>
+          {isAdmin && 
+            <Link to='/admin-panel'>
+              <button>Админка</button>
+            </Link>
+          }
           <Link to='/lesson-selection'>
             <button>Настройка игры</button>
           </Link>
-          <Link to='/login'>
-            <button>Вход/регистрация</button>
-          </Link>
+          {!isAuth && 
+            <Link to='/login'>
+              <button>Вход/регистрация</button>
+            </Link>
+          }
+          {isAuth && <button onClick={handleLogout}>Выход</button>}
         </div>
         <AppRoutes />
       </BrowserRouter>
