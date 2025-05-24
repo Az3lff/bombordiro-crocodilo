@@ -1,5 +1,5 @@
 import { createEvent, createStore, createEffect } from "effector";
-import { login, register } from "../../../Shared/API/auth";
+import { login, register } from "../../../Shared/API";
 import type { LoginData, RegisterData } from "../types"
 
 export const loginFx = createEffect(async (data: LoginData) => {

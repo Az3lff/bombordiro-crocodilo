@@ -1,5 +1,5 @@
 import { createEvent, createStore, createEffect } from "effector";
-import { generateToken } from "../../../Shared/API/auth";
+import { generateToken } from "../../../Shared/API";
 import type { TokenRole } from "../../../Features/Admin/types";
 
 export const generateTokenFx = createEffect(async (role: TokenRole) => {
