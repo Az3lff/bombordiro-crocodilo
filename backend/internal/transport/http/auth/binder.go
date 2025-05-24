@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"github.com/Az3lff/bombordiro-crocodilo/internal/transport/middleware"
 
 	"github.com/Az3lff/bombordiro-crocodilo/pkg/server/http"
 )
@@ -9,12 +10,14 @@ import (
 type Binder struct {
 	server  *http.Server
 	handler *Handler
+	mw      *middleware.Middleware
 }
 
-func NewBinder(server *http.Server, handler *Handler) *Binder {
+func NewBinder(server *http.Server, handler *Handler, mw *middleware.Middleware) *Binder {
 	return &Binder{
 		server:  server,
 		handler: handler,
+		mw:      mw,
 	}
 }
 
@@ -31,11 +34,11 @@ func (b *Binder) BindRoutes(_ context.Context) {
 	}
 
 	{
-		/*admin := b.server.Group("/admin")*/
-		/*v1 := admin.Group("/v1")*/
+		admin := b.server.Group("/admin")
+		v1 := admin.Group("/v1")
 
-		/*auth := v1.Group("/auth")*/
+		auth := v1.Group("/auth")
 
-		/*auth.Post("/token", b.handler.GenerateToken)*/
+		auth.Post("/token", b.mw.Auth, b.handler.GenerateToken)
 	}
 }

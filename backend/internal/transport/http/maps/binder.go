@@ -3,18 +3,22 @@ package maps
 import (
 	"context"
 
+	"github.com/Az3lff/bombordiro-crocodilo/internal/transport/middleware"
+
 	"github.com/Az3lff/bombordiro-crocodilo/pkg/server/http"
 )
 
 type Binder struct {
 	server  *http.Server
 	handler *Handler
+	mw      *middleware.Middleware
 }
 
-func NewBinder(server *http.Server, handler *Handler) *Binder {
+func NewBinder(server *http.Server, handler *Handler, mw *middleware.Middleware) *Binder {
 	return &Binder{
 		server:  server,
 		handler: handler,
+		mw:      mw,
 	}
 }
 

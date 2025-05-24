@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/Az3lff/bombordiro-crocodilo/internal/transport/http/maps"
+	"github.com/Az3lff/bombordiro-crocodilo/internal/transport/middleware"
 	"github.com/Az3lff/bombordiro-crocodilo/pkg/s3"
 	"time"
 
@@ -69,9 +70,11 @@ func Run(ctx context.Context, cfg *config.Config) (err error) {
 	authHandler := auth.NewHandler(services.Auth)
 	mapsHandler := maps.NewHandler(services.Maps)
 
+	mw := middleware.New(middleware.Config{}, services.Auth)
+
 	binder := transport.NewBinder([]http.Binder{
-		auth.NewBinder(server, authHandler),
-		maps.NewBinder(server, mapsHandler),
+		auth.NewBinder(server, authHandler, mw),
+		maps.NewBinder(server, mapsHandler, mw),
 	}...)
 
 	httpServer := http.NewWithBinder(

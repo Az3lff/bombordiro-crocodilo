@@ -3,15 +3,20 @@ package auth
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
+	"strconv"
+	"time"
+
+	txmanager "github.com/avito-tech/go-transaction-manager/trm/manager"
+	"github.com/golang-jwt/jwt/v5"
+
 	"github.com/Az3lff/bombordiro-crocodilo/internal/entities"
 	"github.com/Az3lff/bombordiro-crocodilo/internal/models"
 	"github.com/Az3lff/bombordiro-crocodilo/internal/repository/pg/auth"
 	cache "github.com/Az3lff/bombordiro-crocodilo/internal/repository/redis/auth"
+
 	"github.com/Az3lff/bombordiro-crocodilo/pkg/jwtmanager"
 	"github.com/Az3lff/bombordiro-crocodilo/pkg/roles"
-	txmanager "github.com/avito-tech/go-transaction-manager/trm/manager"
-	"github.com/golang-jwt/jwt/v5"
-	"strconv"
 )
 
 type Service struct {
@@ -65,7 +70,7 @@ func (s *Service) SignUp(ctx context.Context, req models.SignUpRequest) (resp mo
 			return err
 		}
 
-		role = roles.Client
+		role = roles.RoleClient
 
 		if req.InviteToken != "" {
 			role, err = s.repo.UseInviteToken(ctx, user.ID, req.InviteToken)
@@ -122,5 +127,53 @@ func (s *Service) SignIn(ctx context.Context, req models.SignInRequest) (resp mo
 	return models.SignInResponse{
 		Role:      role.Role,
 		AuthToken: token,
+	}, err
+}
+
+func (s *Service) GenerateToken(ctx context.Context, req models.PostInviteTokenRequest) (resp models.PostInviteTokenResponse, err error) {
+	token := &entities.InviteToken{
+		Token:     uuid.New().String(),
+		CreatedAt: time.Now(),
+		CreatedBy: req.AdminID,
+		Role:      req.Role,
+	}
+
+	err = s.repo.InsertInviteToken(ctx, token)
+	if err != nil {
+		return resp, err
+	}
+
+	return models.PostInviteTokenResponse{
+		InviteToken: token.Token,
+	}, err
+}
+
+func (s *Service) Auth(ctx context.Context, req models.AuthRequest) (resp models.AuthResponse, err error) {
+	claims, err := s.jwtManager.ParseAccessToken(req.AuthToken)
+	if err != nil {
+		return resp, err
+	}
+
+	userID, err := strconv.Atoi(claims["sub"].(string))
+	if err != nil {
+		return resp, err
+	}
+
+	user, err := s.repo.SelectUserByID(ctx, userID)
+	if err != nil {
+		return resp, err
+	}
+
+	userRole, err := s.repo.SelectRoleUser(ctx, user.ID)
+	if err != nil {
+		return resp, err
+	}
+
+	return models.AuthResponse{
+		ID:         user.ID,
+		Login:      user.Login,
+		FirstName:  user.FirstName,
+		SecondName: user.SecondName,
+		Role:       userRole.Role,
 	}, err
 }

@@ -195,3 +195,24 @@ func (r *Repository) SelectRoleUser(ctx context.Context, userID int) (user entit
 
 	return user, err
 }
+
+func (r *Repository) SelectUserByID(ctx context.Context, userID int) (user entities.User, err error) {
+	query := `
+		select *
+			from "user"."user"
+		where 
+			id = $1 
+	`
+	
+	err = r.ctxGetter.DefaultTrOrDB(ctx, r.db).GetContext(
+		ctx,
+		&user,
+		query,
+		userID,
+	)
+	if err != nil {
+		return user, err
+	}
+
+	return user, err
+}
