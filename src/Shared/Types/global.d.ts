@@ -10,4 +10,5 @@ interface Window {
     delay: any
     setBothSpeeds: any
     addMessage: any
+    __timerStart: any
 }

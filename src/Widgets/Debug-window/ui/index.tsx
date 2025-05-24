@@ -25,6 +25,7 @@ const CollapsiblePanel = () => {
             {!isCollapsed && (
                 <div style={{ padding: '10px', color: '#fafafa', width: 500, overflowY: 'scroll', height: 349 }}>
                     {messages.length ? messages?.map((message) => <div style={{ marginBottom: 10, display: 'flex', gap: 10 }}>
+                        <div>{(Date.now() - window.__timerStart)} ms:</div>
                         {
                             message?.map((el) => <div>{el}</div>)
                         }
