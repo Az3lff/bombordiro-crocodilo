@@ -71,67 +71,50 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
     const rotation = modelRef.current.rotation;
 
     const forward = new THREE.Vector3(1, 0, 0).applyEuler(rotation).normalize();
-    const backside = new THREE.Vector3(-1, 0, 0).applyEuler(rotation).normalize();
-    const right = new THREE.Vector3(0, 0, 1).applyEuler(rotation).normalize();
+    const back = new THREE.Vector3(-1, 0, 0).applyEuler(rotation).normalize();
     const left = new THREE.Vector3(0, 0, -1).applyEuler(rotation).normalize();
-    // Инициализация глобального объекта, если его нет
-    if (!window.turns) {
-      window.turns = {
-        forward: false,
-        left: false,
-        right: false
-      };
+    const right = new THREE.Vector3(0, 0, 1).applyEuler(rotation).normalize();
+
+    const directions = {
+      forward,
+      back,
+      left,
+      right,
+    };
+
+    const distances: Record<string, number> = {};
+
+    raycaster.current.far = 20;
+
+    const debugRays: JSX.Element[] = [];
+
+    for (const [dirName, dirVector] of Object.entries(directions)) {
+      const origin = base.clone().add(dirVector.clone().multiplyScalar(0.5));
+      raycaster.current.set(origin, dirVector);
+
+      const intersections = raycaster.current.intersectObjects(mazeWalls.current, true);
+      const distance = intersections.length > 0 ? intersections[0].distance : 20;
+
+      distances[dirName] = distance;
+
+      if (sensorVisibility) {
+        debugRays.push(
+            <DebugRay
+                key={dirName}
+                origin={origin}
+                direction={dirVector}
+                length={1}
+                color={distance < 20 ? "red" : "cyan"}
+            />
+        );
+      }
     }
 
-    raycaster.current.far = 1.5;
+    // Сохраняем значения для использования Blockly-блоком
+    window.wallSensorData = distances;
 
-    // === Направо ===
-    const offsetRight = base.clone()
-      .add(forward.clone().multiplyScalar(0))
-      .add(right.clone().multiplyScalar(0.25));
-    raycaster.current.set(offsetRight, right);
-    const rightClear = raycaster.current.intersectObjects(mazeWalls.current, true).length === 0;
-    if (rightClear && !prevTurns.current.right) {
-      window.turns.right = !rightClear;
-      console.log("✅ Открыт поворот НАПРАВО →");
-    }
-    prevTurns.current.right = rightClear;
-    window.turns.right = !rightClear;
-
-    // === Налево ===
-    const offsetLeft = base.clone()
-      .add(forward.clone().multiplyScalar(0))
-      .add(left.clone().multiplyScalar(0.25));
-    raycaster.current.set(offsetLeft, left);
-    const leftClear = raycaster.current.intersectObjects(mazeWalls.current, true).length === 0;
-    if (leftClear && !prevTurns.current.left) {
-      window.turns.left = !leftClear;
-      console.log("✅ Открыт поворот НАЛЕВО ←");
-    }
-    prevTurns.current.left = leftClear;
-    window.turns.left = !leftClear;
-
-    // === Вперёд ===
-    const offsetForward = base.clone().add(forward.clone().multiplyScalar(0.5));
-    const offsetBackside = base.clone().add(backside.clone().multiplyScalar(0.5));
-    raycaster.current.set(offsetForward, forward);
-    const forwardClear = raycaster.current.intersectObjects(mazeWalls.current, true).length === 0;
-    if (!forwardClear && prevTurns.current.forward !== false) {
-      window.turns.forward = forwardClear;
-      console.log("⛔️ ВПЕРЕДИ СТЕНА");
-    }
-    prevTurns.current.forward = forwardClear;
-    window.turns.forward = forwardClear;
-
-    // Отладочные лучи
-    sensorVisibility && setDebugRay(
-      <>
-        <DebugRay origin={offsetRight} direction={right} length={1} color="orange" />
-        <DebugRay origin={offsetLeft} direction={left} length={1} color="orange" />
-        <DebugRay origin={offsetForward} direction={forward} length={1} color={forwardClear ? "cyan" : "red"} />
-        <DebugRay origin={offsetBackside} direction={backside} length={1} color={'orange'} />
-      </>
-    );
+    // Показываем лучи
+    setDebugRay(sensorVisibility ? <>{debugRays}</> : null);
   };
 
 
