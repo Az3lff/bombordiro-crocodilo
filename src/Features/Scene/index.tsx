@@ -62,7 +62,7 @@ export default function Scene() {
         border: '1px solid #ccc',
         borderRadius: '4px',
         cursor: 'pointer'
-      }} onClick={() => setIsSensorVisible(!sensorVisibility)}>{sensorVisibility ? 'Скрыть датчик стены' : 'Отобразить датчик стены'}</button>
+      }} onClick={() => setIsSensorVisible(!sensorVisibility)}>{sensorVisibility ? 'Выключить отладочный режим' : 'Включить отладочный режим'}</button>
       <CollapsiblePanel />
       <Canvas
         shadows
