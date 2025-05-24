@@ -4,13 +4,14 @@ import type { LoginData, RegisterData } from "../types"
 
 export const loginFx = createEffect(async (data: LoginData) => {
   const response = await login(data);
-  return response.data.token as string;
+  return response.data.auth_token as string;
 });
 
 export const registerFx = createEffect(async (data: RegisterData) => {
   const response = await register(data);
-  return response.data;
+  return response;
 });
+
 
 export const $authError = createStore<string | null>(null)
   .on(loginFx.failData, (_, error) => 'Ошибка входа: ' + error.message)

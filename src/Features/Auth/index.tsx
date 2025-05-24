@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUnit } from 'effector-react';
 import { loginFx, registerFx, $authError } from './model';
 import type { LoginData, RegisterData } from './types';
 import Button from '../../Shared/UI/Button';
 import "./styles.css"
+import { userLoggedIn } from '../../Entities/session';
 
 const AuthForm: React.FC = () => {
+  const navigate = useNavigate();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [form, setForm] = useState<Partial<RegisterData>>({});
   const error = useUnit($authError);
@@ -21,16 +24,32 @@ const AuthForm: React.FC = () => {
         login: form.login || '',
         password: form.password || '',
       };
-      loginFx(data);
+      const token = await loginFx(data);
+      if (token) {
+        userLoggedIn(token);
+        setForm({});
+        navigate('/');
+      } else {
+        console.error("Ошибка получения токена")
+      }
     } else {
       const data: RegisterData = {
         login: form.login || '',
         password: form.password || '',
-        firstName: form.firstName || '',
-        secondName: form.secondName || '',
-        inviteToken: form.inviteToken || '',
+        first_name: form.first_name || '',
+        second_name: form.second_name || '',
+        invite_token: form.invite_token || '',
       };
-      registerFx(data);
+        const response = await registerFx(data);
+        if (response.status === 201 || response.status === 200) {
+          if (response.data.auth_token) {
+            userLoggedIn(response.data.auth_token);
+            setForm({});
+            navigate('/');
+          } else {
+            console.error("Ошибка получения токена")
+          }
+        }
     }
   };
 
@@ -59,9 +78,9 @@ const AuthForm: React.FC = () => {
             <input name="password" type="password" placeholder="Пароль" onChange={handleChange} required />
             {!isLoginMode && (
                 <>
-                <input name="secondName" placeholder="Фамилия" onChange={handleChange} required />
-                <input name="firstName" placeholder="Имя" onChange={handleChange} required />
-                <input name="inviteToken" placeholder="Код приглашения" onChange={handleChange} required />
+                <input name="second_name" placeholder="Фамилия" onChange={handleChange} required />
+                <input name="first_name" placeholder="Имя" onChange={handleChange} required />
+                <input name="invite_token" placeholder="Код приглашения" onChange={handleChange} />
                 </>
             )}
             {error && <p style={{color: 'red'}}>{error}</p>}

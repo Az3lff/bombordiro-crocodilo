@@ -3,24 +3,37 @@ import PlayingFieldPage from '../../Pages/Playing-field-page/ui/index'
 import AuthPage from '../../Pages/Auth-page/ui';
 import AdminPanelPage from '../../Pages/Admin-page/ui';
 import LessonSelectionPage from '../../Pages/Lesson-selection-page/ui';
+import { ProtectedRoute, AdminRoute } from './protectedRoutes';
 
 const routes: RouteObject[] = [
-  {
-    path: '/',
-    element: <PlayingFieldPage />,
-  },
   {
     path: '/login',
     element: <AuthPage />
   },
   {
-    path: '/admin-panel',
-    element: <AdminPanelPage />
+    element: <ProtectedRoute />,
+    children: 
+    [
+      {
+        path: '/',
+        element: <PlayingFieldPage />
+      },
+      {
+        element: <AdminRoute />,
+        children: 
+        [
+          {
+            path: '/admin-panel',
+            element: <AdminPanelPage />
+          }
+        ]
+      },
+      {
+        path: '/lesson-selection',
+        element: <LessonSelectionPage />
+      }
+    ]
   },
-  {
-    path: '/lesson-selection',
-    element: <LessonSelectionPage />
-  }
 ];
 
 export default routes;
