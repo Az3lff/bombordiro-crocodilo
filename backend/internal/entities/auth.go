@@ -25,4 +25,6 @@ type (
 		UserID int    `db:"user_id"`
 		Role   string `db:"role"`
 	}
+	ClientInfo struct {
+	}
 )
