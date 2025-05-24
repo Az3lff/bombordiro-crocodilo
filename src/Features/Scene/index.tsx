@@ -9,6 +9,7 @@ import { setPlayerRef, } from "../../Entities/block/player/store/store";
 import { $sensorVisible, setIsSensorVisible } from "../../Entities/sensor-control/store";
 import { useUnit } from "effector-react";
 import CollapsiblePanel from "../../Widgets/Debug-window/ui";
+import { TimerComponent } from "../Timer";
 
 export default function Scene() {
   const controlsRef = useRef<any>(null);
@@ -16,26 +17,10 @@ export default function Scene() {
 
   const sensorVisibility = useUnit($sensorVisible);
 
-  const INITIAL_POSITION = [10.5, 0.2, 1.1];
-  const INITIAL_ROTATION = Math.PI / 2;
-
   const handlePlayerRef = useCallback((refInstance: any) => {
     if (refInstance) {
       playerRef.current = refInstance;
       setPlayerRef(refInstance);
-    }
-  }, []);
-
-  const resetPlayerPosition = useCallback(() => {
-    if (playerRef.current) {
-      playerRef.current.setTranslation(INITIAL_POSITION, true);
-      playerRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      playerRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
-
-      const model = playerRef.current.getObjectByName('player-model');
-      if (model) {
-        model.rotation.y = INITIAL_ROTATION;
-      }
     }
   }, []);
 
@@ -52,6 +37,7 @@ export default function Scene() {
         { name: "cameraRight", keys: ["ArrowRight"] },
       ]}
     >
+      {sensorVisibility && <TimerComponent />}
       <button style={{
         position: 'absolute',
         right: 20,
