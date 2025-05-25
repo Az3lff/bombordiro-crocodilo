@@ -1,5 +1,5 @@
 import { createEffect, createEvent, createStore } from 'effector';
-import { axiosInstance } from '../../Shared/API/auth';
+import { axiosInstance } from '../../Shared/API';
 import { $token, } from '../session';
 
 export type MapItem = {
