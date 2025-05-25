@@ -11,6 +11,15 @@ const routes: RouteObject[] = [
     element: <AuthPage />
   },
   {
+    element: <AdminRoute />,
+    children: [
+      {
+        path: '/admin-panel',
+        element: <AdminPanelPage />
+      }
+    ]
+  },
+  {
     element: <ProtectedRoute />,
     children:
       [
@@ -22,16 +31,6 @@ const routes: RouteObject[] = [
               element: <PlayingFieldPage />
             }
           ]
-        },
-        {
-          element: <AdminRoute />,
-          children:
-            [
-              {
-                path: '/admin-panel',
-                element: <AdminPanelPage />
-              }
-            ]
         },
         {
           path: '/lesson-selection',

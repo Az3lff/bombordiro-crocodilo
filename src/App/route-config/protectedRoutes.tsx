@@ -13,9 +13,9 @@ export const ProtectedRoute = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // if (isAdmin) {
-  //   return <Navigate to="/admin-panel" replace />;
-  // }
+  if (isAdmin) {
+    return <Navigate to="/admin-panel" replace />;
+  }
 
   return <Outlet />;
 };

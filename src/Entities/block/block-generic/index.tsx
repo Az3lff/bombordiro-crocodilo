@@ -8,18 +8,21 @@ import * as ru from 'blockly/msg/ru';
 
 import { useUnit } from "effector-react";
 import { setBlocklyCode } from "../store/store";
-import { timerStarted } from '../timer/store';
 import { clearAllMessages } from "../../debug-window/store";
 import { initializePauseControls } from "../../pause-control/init";
 import { PauseResumeControls } from "../../../Widgets/Pause-controls/ui";
-import styled from "styled-components";
 import { resetPlayerPosition } from "../player/store/store";
 import { pause, reset, start, stop } from "../../timer/store";
+import { Button } from "antd";
+import { DoubleLeftOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const BlocklyComponent = () => {
   const [workspace, setWorkspace] = useState<any | null>(null);
   const setCode = useUnit(setBlocklyCode);
   const [isRunning, setIsRunning] = useState(false);
+
+  const navigate = useNavigate()
 
   const executionRef = useRef<{ abort: boolean }>({ abort: false });
 
@@ -207,7 +210,7 @@ const BlocklyComponent = () => {
   };
 
   return (
-    <div style={{ height: "100vh", width: "40vw", position: "relative", overflow: "hidden" }}>
+    <div style={{ height: "100vh", width: "39vw", position: "relative", overflow: "hidden" }}>
       <BlocklyWorkspace
         toolboxConfiguration={toolbox}
         workspaceConfiguration={workspaceConfiguration}
@@ -222,6 +225,9 @@ const BlocklyComponent = () => {
         onReset={handleReset}
         onRun={handleRunClick}
       />
+      <Button style={{ position: 'absolute', zIndex: 1000, bottom: 4, left: 0, width: 175 }} onClick={() => navigate('/lesson-selection')}>
+        <DoubleLeftOutlined />Назад
+      </Button>
     </div>
   );
 };

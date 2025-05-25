@@ -10,6 +10,8 @@ import { $sensorVisible, setIsSensorVisible } from "../../Entities/sensor-contro
 import { useUnit } from "effector-react";
 import CollapsiblePanel from "../../Widgets/Debug-window/ui";
 import { TimerComponent } from "../Timer";
+import { Button } from "antd";
+import { CloseCircleOutlined, ExclamationCircleOutlined, FullscreenExitOutlined, FullscreenOutlined } from "@ant-design/icons";
 
 export default function Scene() {
   const controlsRef = useRef<any>(null);
@@ -38,17 +40,16 @@ export default function Scene() {
       ]}
     >
       {sensorVisibility && <TimerComponent />}
-      <button style={{
+      <Button style={{
         position: 'absolute',
         right: 20,
         top: 20,
         zIndex: 10,
-        padding: '8px 16px',
-        background: '#ffffff',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        cursor: 'pointer'
-      }} onClick={() => setIsSensorVisible(!sensorVisibility)}>{sensorVisibility ? 'Выключить отладочный режим' : 'Включить отладочный режим'}</button>
+      }}
+        icon={sensorVisibility ? <CloseCircleOutlined /> : <ExclamationCircleOutlined />}
+        onClick={() => setIsSensorVisible(!sensorVisibility)}>
+        {sensorVisibility ? 'Выключить отладочный режим' : 'Включить отладочный режим'}
+      </Button>
       <CollapsiblePanel />
       <Canvas
         shadows
