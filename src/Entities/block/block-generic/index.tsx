@@ -146,6 +146,8 @@ const BlocklyComponent = () => {
 
   const handleReset = () => {
     console.log("Execution aborted");
+    stop()
+    reset()
     window.abortExecution();
     resetPlayerPosition()
     window.__shouldAbort = true;
@@ -198,7 +200,6 @@ const BlocklyComponent = () => {
       }
     } finally {
       setIsRunning(false);
-      console.log('Все')
       stop()
 
       window.__shouldAbort = false;

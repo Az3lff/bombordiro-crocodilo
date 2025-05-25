@@ -28,7 +28,7 @@ const AuthForm: React.FC = () => {
       if (token) {
         userLoggedIn(token);
         setForm({});
-        navigate('/');
+        navigate('/lesson-selection');
       } else {
         console.error("Ошибка получения токена")
       }
@@ -45,7 +45,7 @@ const AuthForm: React.FC = () => {
           if (response.data.auth_token) {
             userLoggedIn(response.data.auth_token);
             setForm({});
-            navigate('/');
+            navigate('/lesson-selection');
           } else {
             console.error("Ошибка получения токена")
           }

@@ -6,7 +6,6 @@ import { $isAuthenticated, $isAdmin, $userRole, userLoggedOut } from "../../Enti
 function App() {
   const isAuth = useUnit($isAuthenticated);
   const isAdmin = useUnit($isAdmin);
-  console.log($userRole.getState());
   const handleLogout = () => {
     userLoggedOut();
   }

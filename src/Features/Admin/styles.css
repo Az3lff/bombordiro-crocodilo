@@ -4,8 +4,6 @@
 
 .container {
     margin: 0 auto;
-    display: flex;
-    gap: 12px;
 }
 
 .invite__inner {

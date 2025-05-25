@@ -3,7 +3,7 @@ import PlayingFieldPage from '../../Pages/Playing-field-page/ui/index'
 import AuthPage from '../../Pages/Auth-page/ui';
 import AdminPanelPage from '../../Pages/Admin-page/ui';
 import LessonSelectionPage from '../../Pages/Lesson-selection-page/ui';
-import { ProtectedRoute, AdminRoute } from './protectedRoutes';
+import { ProtectedRoute, AdminRoute, SceneRoute } from './protectedRoutes';
 
 const routes: RouteObject[] = [
   {
@@ -12,27 +12,32 @@ const routes: RouteObject[] = [
   },
   {
     element: <ProtectedRoute />,
-    children: 
-    [
-      {
-        path: '/',
-        element: <PlayingFieldPage />
-      },
-      {
-        element: <AdminRoute />,
-        children: 
-        [
-          {
-            path: '/admin-panel',
-            element: <AdminPanelPage />
-          }
-        ]
-      },
-      {
-        path: '/lesson-selection',
-        element: <LessonSelectionPage />
-      }
-    ]
+    children:
+      [
+        {
+          element: <SceneRoute />,
+          children: [
+            {
+              path: '/',
+              element: <PlayingFieldPage />
+            }
+          ]
+        },
+        {
+          element: <AdminRoute />,
+          children:
+            [
+              {
+                path: '/admin-panel',
+                element: <AdminPanelPage />
+              }
+            ]
+        },
+        {
+          path: '/lesson-selection',
+          element: <LessonSelectionPage />
+        }
+      ]
   },
 ];
 
