@@ -21,3 +21,5 @@ export const register = (data: RegisterData) => axiosInstance.post('/api/v1/auth
 export const generateToken = (role: TokenRole) => axiosInstance.post('/admin/v1/auth/token', null, {
     params: { role },
 });
+
+export const uploadMap = (data: FormData) => axiosInstance.post('/admin/v1/maps/', data);

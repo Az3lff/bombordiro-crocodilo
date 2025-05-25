@@ -1,3 +1,6 @@
+import Button from "../../../Shared/UI/Button"
+import UploadMapModal from "../../../Features/Upload-map/ui";
+import { $isClient } from "../../../Entities/session";
 import styled from "styled-components";
 import { useUnit } from "effector-react";
 import { $maps, fetchMapsFx } from "../../../Entities/maps/store";
@@ -9,11 +12,22 @@ const LessonSelectionPage = () => {
     const maps = useUnit($maps);
 
     const [radioValue, setRadioValue] = useState<string | null>(null)
+    
+    const isClient = useUnit($isClient);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
     useEffect(() => {
         fetchMapsFx();
     }, []);
     return <Container>
+      <section style={{padding: '40px 0'}} className="maps">
+                <div style={{display: 'flex', justifyContent: 'center'}} className="container maps__inner">
+                    {!isClient && <Button onClick={openModal}>Загрузка уровня</Button>}
+                </div>
+            </section>
+            <UploadMapModal isOpen={isModalOpen} onClose={closeModal} />
         <Radio.Group style={{ display: 'flex', flexDirection: 'column' }} value={radioValue} onChange={(e) => setRadioValue(e.target.value)}>
             {
                 maps?.map((el) => <Radio value={el?.id}>{el?.title}</Radio>)

@@ -29,6 +29,7 @@ export const $userRole = createStore<'admin' | 'client' | 'teacher' | null>(null
 // Является ли пользователь авторизован
 export const $isAuthenticated = $token.map(Boolean);
 export const $isAdmin = $userRole.map((role) => role === 'admin');
+export const $isClient = $userRole.map((role) => role === 'client');
 
 // Сохраняем токен в localStorage
 persist({ store: $token, key: 'auth_token' });
