@@ -116,9 +116,17 @@ func (c *Client) UploadChunk(
 	if uploadID != nil {
 		uploadIDResponse = *uploadID
 	} else {
+		ext := filepath.Ext(fileID)
+		mimeType := mime.TypeByExtension(ext)
+		if mimeType == "" {
+			mimeType = "application/octet-stream"
+		}
+
 		createOutput, err := c.s3.CreateMultipartUpload(ctx, &s3.CreateMultipartUploadInput{
-			Bucket: aws.String(c.cfg.Bucket),
-			Key:    aws.String(fileID),
+			Bucket:             aws.String(c.cfg.Bucket),
+			Key:                aws.String(fileID),
+			ContentDisposition: aws.String("inline"),
+			ContentType:        aws.String(mimeType),
 		})
 		if err != nil {
 			return "", 0, err

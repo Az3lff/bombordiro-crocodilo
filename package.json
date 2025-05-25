@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "@react-three/cannon": "^6.6.0",
     "@react-three/drei": "^10.0.5",
     "@react-three/fiber": "^9.1.0",
     "@react-three/rapier": "^2.0.0",
+    "antd": "^5.25.2",
     "axios": "^1.9.0",
     "blockly": "^11.2.2",
     "effector": "^23.3.0",
@@ -22,6 +24,7 @@
     "react": "^19.0.0",
     "react-blockly": "^9.0.0",
     "react-dom": "^19.0.0",
+    "react-pdf": "^9.2.1",
     "react-router-dom": "^7.6.0",
     "styled-components": "^6.1.18",
     "three": "^0.175.0"

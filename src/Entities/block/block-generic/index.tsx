@@ -14,6 +14,7 @@ import { initializePauseControls } from "../../pause-control/init";
 import { PauseResumeControls } from "../../../Widgets/Pause-controls/ui";
 import styled from "styled-components";
 import { resetPlayerPosition } from "../player/store/store";
+import { pause, reset, start } from "../../timer/store";
 
 const BlocklyComponent = () => {
   const [workspace, setWorkspace] = useState<any | null>(null);
@@ -135,10 +136,12 @@ const BlocklyComponent = () => {
 
   const handlePause = () => {
     console.log("Execution paused");
+    pause()
   };
 
   const handleResume = () => {
     console.log("Execution resumed");
+    start()
   };
 
   const handleReset = () => {
@@ -155,6 +158,8 @@ const BlocklyComponent = () => {
     executionRef.current.abort = false;
     const generatedCode = javascriptGenerator.workspaceToCode(workspace);
     clearAllMessages();
+    reset()
+    start()
     console.log("🔁 Generated Blockly JS Code:", generatedCode);
     setCode(generatedCode);
 

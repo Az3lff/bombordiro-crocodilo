@@ -1,9 +1,10 @@
 package maps
 
 import (
+	"io"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"io"
 
 	"github.com/Az3lff/bombordiro-crocodilo/internal/models"
 	"github.com/Az3lff/bombordiro-crocodilo/internal/service/maps"

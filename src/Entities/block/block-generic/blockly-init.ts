@@ -36,6 +36,13 @@ window.addMessage = (message: string[]) => {
   addMessage(message)
 }
 
+// Глобально доступный объект с последними расстояниями (обновляется в checkTurns)
+declare global {
+  interface Window {
+    wallSensorData?: Record<'forward' | 'back' | 'left' | 'right', number>;
+  }
+}
+
 // Расширяем типы для TypeScript
 declare module "blockly/javascript" {
   interface JavascriptGenerator {
@@ -161,77 +168,26 @@ export const initCustomBlocks = () => {
 
   // УСЛОВИЯ
 
-  // TODO: Снести как появится датчик стены
-  Blockly.Blocks['condition_stub'] = {
-    init: function () {
-      // Добавляем выпадающий список
-      this.appendDummyInput()
-        .appendField('Пока ')
-        .appendField(new Blockly.FieldDropdown([
-          ['впереди нет объекта', 'forward'],
-          ['сзади нет объекта', 'back'],
-          ['справа есть стена', 'right'],
-          ['слева есть стена', 'left']
-        ]), 'CONDITION');
-
-      // Настраиваем как булево выражение (для условий)
-      this.setOutput(true, 'Boolean');
-      this.setColour("#95325a");
-      this.setTooltip('Стены');
-    }
-  };
-
-  // TODO: Детектирование стен с условием расстояния
-  // Blockly.Blocks['wall_detect'] = {
-  //   init: function () {
-  //     this.appendDummyInput()
-  //       .appendField('Стена')
-  //       .appendField(new Blockly.FieldDropdown([
-  //         ['спереди', 'forward'],
-  //         ['сзади', 'back'],
-  //         ['справа', 'right'],
-  //         ['слева', 'left']
-  //       ]), 'DIRECTION')
-  //       .appendField(new Blockly.FieldDropdown([
-  //         ['есть', 'TRUE'],
-  //         ['нет', 'FALSE']
-  //       ]), 'EXPECTED')
-  //     this.appendDummyInput()
-  //       .appendField('на расстоянии')
-  //       .appendField(new Blockly.FieldDropdown([
-  //         ['=', '=='],
-  //         ['≠', '!='],
-  //         ['<', '<'],
-  //         ['≤', '<='],
-  //         ['>', '>'],
-  //         ['≥', '>=']
-  //       ]), 'OPERATOR')
-  //       .appendField(new Blockly.FieldNumber(1), 'DISTANCE');
-  //
-  //     this.setOutput(true, 'Boolean');
-  //     this.setColour("#95325a");
-  //     this.setTooltip('Проверяет наличие стены с заданной стороны на');
-  //   }
-  // };
-  // TODO: Попробовать с эти если слишком сложно, то ток который выше
-  Blockly.Blocks['wall_detect'] = {
+  // Датчик стены
+  Blockly.Blocks["wall_detect"] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('Стена')
-        .appendField(new Blockly.FieldDropdown([
-          ['спереди', 'forward'],
-          ['сзади', 'back'],
-          ['справа', 'right'],
-          ['слева', 'left']
-        ]), 'DIRECTION')
-        .appendField('на расстоянии')
-
+          .appendField("Стена")
+          .appendField(
+              new Blockly.FieldDropdown([
+                ["спереди", "forward"],
+                ["сзади", "back"],
+                ["слева", "left"],
+                ["справа", "right"]
+              ]),
+              'DIRECTION'
+          )
+          .appendField("на расстоянии");
       this.setOutput(true, 'Number');
       this.setColour("#95325a");
-      this.setTooltip('Проверяет наличие стены с заданной стороны');
+      this.setTooltip("Возвращает расстояние до ближайшей стены/препятствия в выбранном направлении (макс. 20 ед.)");
     }
   };
-
 
   // TODO: детектирование линии
   Blockly.Blocks['line_detect'] = {
@@ -282,7 +238,7 @@ export const initCustomBlocks = () => {
     }
   };
 
-  // TODO: сброс таймера
+  // Сброс таймера
   Blockly.Blocks['timer_reset'] = {
     init: function () {
       this.appendDummyInput().appendField("Сброс таймера");
@@ -331,12 +287,10 @@ export const initCustomBlocks = () => {
     return `await window.setMotorSpeed({side: "${motor}", speed: ${speed}});\n`;
   };
 
-  javascriptGenerator.forBlock['wall_detect'] = function (block) {
-    const dir = block.getFieldValue('DIRECTION');
-    const expect = block.getFieldValue('EXPECTED');
-    const dist = Math.max(0.1, block.getFieldValue('DISTANCE')); // гарантия положительного значения
-
-    return [`window.checkWall('${dir}', ${dist}) === ${expect === 'TRUE'}`, javascriptGenerator.ORDER_LOGICAL_AND];
+  javascriptGenerator.forBlock["wall_detect"] = function (block: any) {
+    const direction = block.getFieldValue("DIRECTION");
+    const code = `(window.wallSensorData?.["${direction}"] ?? 20)`; // обернуто в скобки
+    return [code, javascriptGenerator.ORDER_ATOMIC];
   };
 
   javascriptGenerator.forBlock["turn_right"] = function (block: any) {
