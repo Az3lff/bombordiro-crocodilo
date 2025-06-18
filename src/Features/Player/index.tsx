@@ -25,7 +25,6 @@ export const Player = forwardRef<PlayerRef>((props, ref) => {
   const currentVelocity = useRef(new THREE.Vector3());
   const raycaster = useRef(new THREE.Raycaster());
   const mazeWalls = useRef<THREE.Object3D[]>([]);
-  const prevTurns = useRef({ right: false, left: false, forward: false });
 
   const [debugRay, setDebugRay] = useState<JSX.Element | null>(null);
 

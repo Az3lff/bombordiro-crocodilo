@@ -8,7 +8,7 @@ import { Button, Radio, Tooltip, Typography } from "antd";
 import PDFViewer from "../../../Features/PdfViewer";
 import { useNavigate } from "react-router-dom";
 import { setCurrentMap } from "../../../Entities/maps/current-map-store";
-import { LogoutOutlined, PlayCircleOutlined, UploadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, LogoutOutlined, PlayCircleOutlined, UploadOutlined } from "@ant-design/icons";
 
 const LessonSelectionPage = () => {
     const maps = useUnit($maps);
@@ -40,6 +40,9 @@ const LessonSelectionPage = () => {
                     <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }} className="container maps__inner">
                         {!isClient &&
                             <Button size={'large'} icon={<UploadOutlined />} style={{ borderRadius: 3 }} onClick={openModal} color={'default'} variant="solid">Добавить уровень</Button>
+                        }
+                        {!isClient &&
+                            <Button size={'large'} icon={<DeleteOutlined />} style={{ borderRadius: 3 }} onClick={() => { }} disabled={!radioValue} color={'red'} variant="solid">Удалить уровень</Button>
                         }
                         <Button size={'large'} icon={<PlayCircleOutlined />} style={{ borderRadius: 3 }} color={'primary'} disabled={!radioValue} variant="solid" onClick={() => {
                             setCurrentMap(maps?.find((map) => map.id === radioValue) as any)
